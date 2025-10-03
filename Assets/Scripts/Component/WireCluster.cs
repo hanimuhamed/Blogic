@@ -37,7 +37,7 @@ public class WireCluster : MonoBehaviour
         }
     }
 
-    public void Initialize()
+    /*public void Initialize()
     {
         if (IsInitialized()) return;
         isVisited = true;
@@ -91,7 +91,7 @@ public class WireCluster : MonoBehaviour
             }
         }
         return;
-    }
+    }*/
     public virtual void UpdateState()
     {
         foreach (var source in inputSources)

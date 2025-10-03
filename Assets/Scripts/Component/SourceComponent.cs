@@ -19,10 +19,7 @@ public class SourceComponent : MonoBehaviour
 
     void Start()
     {
-        pos = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x),
-            Mathf.RoundToInt(transform.position.y)
-        );
+        
         //allSources.Add(this);
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
@@ -42,7 +39,7 @@ public class SourceComponent : MonoBehaviour
         }
     }
 
-    public void Initialize()
+    /*public void Initialize()
     {
         if (IsInitialized()) return;
         isVisited = true;
@@ -104,7 +101,7 @@ public class SourceComponent : MonoBehaviour
                 nextNot.Initialize();
         }
         return;
-    }
+    }*/
     public virtual void UpdateState()
     {
         SetState(IsOn());
@@ -143,6 +140,10 @@ public class SourceComponent : MonoBehaviour
             //Debug.Log("Enqueuing UpdateNext for cluster " + cluster.GetInstanceID());
             SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(localVisited));
         }
+        pos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x),
+            Mathf.RoundToInt(transform.position.y)
+        );
         NotComponent nextNot = ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<NotComponent>();
         if (nextNot != null)
         {

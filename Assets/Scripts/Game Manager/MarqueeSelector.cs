@@ -9,6 +9,7 @@ public class ClipboardEntry
 }
 public class MarqueeSelector : MonoBehaviour
 {
+    #region variables
     public Camera mainCam;
     public Transform workspace;
     public Color marqueeColor = new Color(1f, 1f, 0f, 0.25f); // semi-transparent yellow
@@ -29,6 +30,8 @@ public class MarqueeSelector : MonoBehaviour
     private bool pasteMode = false;
     private List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
+    private bool isDuplicateMode = false;
+    #endregion variables
     void Start()
     {
         marqueeFillObj = new GameObject("MarqueeFill");
@@ -53,7 +56,6 @@ public class MarqueeSelector : MonoBehaviour
         if (pasteMode)
             UpdatePasteGhost();
     }
-
     public void HandleMarquee()
     {
         Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
@@ -92,10 +94,35 @@ public class MarqueeSelector : MonoBehaviour
         // Dragging logic
         if (isDragging && Input.GetMouseButton(0))
         {
-            Vector3 mouseDelta = mainCam.ScreenToWorldPoint(Input.mousePosition) - dragStartMouseWorld;
+            Vector3 mouseDelta = mouseWorld - dragStartMouseWorld;
+
+            // Calculate selection bounds
+            int minOffsetX = int.MaxValue, maxOffsetX = int.MinValue;
+            int minOffsetY = int.MaxValue, maxOffsetY = int.MinValue;
             foreach (var sel in selectedObjects)
             {
-                Vector3 newPos = dragStartMouseWorld + dragOffsets[sel] + mouseDelta;
+                int offsetX = Mathf.RoundToInt(dragOffsets[sel].x);
+                int offsetY = Mathf.RoundToInt(dragOffsets[sel].y);
+                if (offsetX < minOffsetX) minOffsetX = offsetX;
+                if (offsetX > maxOffsetX) maxOffsetX = offsetX;
+                if (offsetY < minOffsetY) minOffsetY = offsetY;
+                if (offsetY > maxOffsetY) maxOffsetY = offsetY;
+            }
+            int mouseX = Mathf.RoundToInt(mouseWorld.x);
+            int mouseY = Mathf.RoundToInt(mouseWorld.y);
+
+            int clampedX = Mathf.Clamp(mouseX,
+                -TileSpawner.width - minOffsetX,
+                TileSpawner.width - maxOffsetX);
+            int clampedY = Mathf.Clamp(mouseY,
+                -TileSpawner.height - minOffsetY,
+                TileSpawner.height - maxOffsetY);
+
+            Vector3 clampedMouseWorld = new Vector3(clampedX, clampedY, 0);
+
+            foreach (var sel in selectedObjects)
+            {
+                Vector3 newPos = clampedMouseWorld + dragOffsets[sel];
                 newPos.x = Mathf.Round(newPos.x);
                 newPos.y = Mathf.Round(newPos.y);
                 newPos.z = 0;
@@ -183,7 +210,6 @@ public class MarqueeSelector : MonoBehaviour
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
     }
-
     public void HideMarquee()
     {
         if (marqueeFillObj != null)
@@ -221,7 +247,6 @@ public class MarqueeSelector : MonoBehaviour
             }
         }
     }
-
     public void ClearSelection()
     {
         foreach (var obj in selectedObjects)
@@ -281,11 +306,13 @@ public class MarqueeSelector : MonoBehaviour
     public void DuplicateSelection()
     {
         CopySelection();
+        isDuplicateMode = true;
         StartPasteMode(useClipboard: true, useSelectionAsGhost: true);
     }
     public void PasteClipboard()
     {
         if (clipboard.Count == 0) return;
+        isDuplicateMode = false;
         StartPasteMode(useClipboard: true, useSelectionAsGhost: false);
     }
     private void StartPasteMode(bool useClipboard, bool useSelectionAsGhost)
@@ -329,8 +356,6 @@ public class MarqueeSelector : MonoBehaviour
             ghostGroup.Add(ghost);
         }
     }
-
-    // Call this in Update() if pasteMode is true:
     public void UpdatePasteGhost()
     {
         if (!pasteMode || clipboard.Count == 0) return;
@@ -364,17 +389,23 @@ public class MarqueeSelector : MonoBehaviour
         if (canPaste && Input.GetMouseButtonDown(0))
         {
             PlaceClipboardAt(mx, my);
-            pasteMode = false;
-            ClearGhostGroup();
+            if (!isDuplicateMode)
+            {
+                pasteMode = false;
+                ClearGhostGroup();
+            }
+            SaveManager.SaveLookUp();
+            gameManager.compileText.enabled = true;
+            gameManager.isCompiled = false;
         }
         // Cancel paste on right click
         if (Input.GetMouseButtonDown(1))
         {
             pasteMode = false;
+            isDuplicateMode = false;
             ClearGhostGroup();
         }
     }
-
     private void PlaceClipboardAt(int mx, int my)
     {
         // Place all objects, replacing existing
@@ -396,14 +427,12 @@ public class MarqueeSelector : MonoBehaviour
         }
         selectedObjects = newSelection;
     }
-
     private void ClearGhostGroup()
     {
         foreach (var g in ghostGroup)
             Destroy(g);
         ghostGroup.Clear();
     }
-
     private void SetGhostVisual(GameObject obj)
     {
         var sr = obj.GetComponent<SpriteRenderer>();

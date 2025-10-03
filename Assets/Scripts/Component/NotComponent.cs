@@ -6,11 +6,6 @@ public class NotComponent : SourceComponent
 {
     public void Start()
     {
-        pos = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x),
-            Mathf.RoundToInt(transform.position.y)
-        );
-        //allSources.Add(this);
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
         errorHighlight = gameObject.transform.GetChild(0).gameObject;
@@ -70,6 +65,10 @@ public class NotComponent : SourceComponent
             //Debug.Log("Enqueuing UpdateNext for cluster " + cluster.GetInstanceID());
             SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(localVisited));
         }
+        pos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x),
+            Mathf.RoundToInt(transform.position.y)
+        );
         NotComponent nextNot = ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<NotComponent>();
         if (nextNot != null)
         {
