@@ -13,6 +13,11 @@ public class MarqueeSelector : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     public List<GameObject> selectedObjects = new List<GameObject>();
+    private bool isDragging = false;
+    private Vector3 dragStartMouseWorld;
+    private Dictionary<GameObject, Vector3> dragOffsets = new Dictionary<GameObject, Vector3>();
+    private Dictionary<GameObject, (int, int)> originalPositions = new Dictionary<GameObject, (int, int)>();
+    public GameManager gameManager;
 
     void Start()
     {
@@ -27,23 +32,100 @@ public class MarqueeSelector : MonoBehaviour
 
     public void HandleMarquee()
     {
-        if (Input.GetMouseButtonDown(0))
+        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0;
+
+        // Start drag if mouse is over a selected object and left mouse down
+        if (!isDragging && Input.GetMouseButtonDown(0))
         {
-            marqueeActive = true;
-            marqueeStart = mainCam.ScreenToWorldPoint(Input.mousePosition);
-            marqueeStart.z = 0;
+            foreach (var obj in selectedObjects)
+            {
+                if (obj == null) continue;
+                Vector3 objPos = obj.transform.position;
+                if (Vector2.Distance(new Vector2(objPos.x, objPos.y), new Vector2(mouseWorld.x, mouseWorld.y)) < 0.5f)
+                {
+                    // Begin drag
+                    isDragging = true;
+                    dragStartMouseWorld = mouseWorld;
+                    dragOffsets.Clear();
+                    originalPositions.Clear();
+                    foreach (var sel in selectedObjects)
+                    {
+                        dragOffsets[sel] = sel.transform.position - mouseWorld;
+                        int ox = Mathf.RoundToInt(sel.transform.position.x);
+                        int oy = Mathf.RoundToInt(sel.transform.position.y);
+                        originalPositions[sel] = (ox, oy);
+                        // Remove from lookup so we can move freely
+                        var key = (ox, oy);
+                        if (ComponentScript.GetAllLookUp().ContainsKey(key) && ComponentScript.GetAllLookUp()[key] == sel)
+                            ComponentScript.GetAllLookUp().Remove(key);
+                    }
+                    return;
+                }
+            }
         }
-        if (Input.GetMouseButton(0) && marqueeActive)
+
+        // Dragging logic
+        if (isDragging && Input.GetMouseButton(0))
         {
-            marqueeEnd = mainCam.ScreenToWorldPoint(Input.mousePosition);
-            marqueeEnd.z = 0;
-            DrawFilledMarquee(marqueeStart, marqueeEnd);
+            Vector3 mouseDelta = mainCam.ScreenToWorldPoint(Input.mousePosition) - dragStartMouseWorld;
+            foreach (var sel in selectedObjects)
+            {
+                Vector3 newPos = dragStartMouseWorld + dragOffsets[sel] + mouseDelta;
+                newPos.x = Mathf.Round(newPos.x);
+                newPos.y = Mathf.Round(newPos.y);
+                newPos.z = 0;
+                sel.transform.position = newPos;
+            }
+            return;
         }
-        if (Input.GetMouseButtonUp(0) && marqueeActive)
+
+        // End drag
+        if (isDragging && Input.GetMouseButtonUp(0))
         {
-            marqueeActive = false;
-            marqueeFillObj.SetActive(false);
-            SelectInRect(marqueeStart, marqueeEnd); // <-- Select on drag end
+            isDragging = false;
+            // Place in lookup, replacing any existing objects
+            foreach (var sel in selectedObjects)
+            {
+                int x = Mathf.RoundToInt(sel.transform.position.x);
+                int y = Mathf.RoundToInt(sel.transform.position.y);
+                var key = (x, y);
+                // Replace existing
+                if (ComponentScript.GetAllLookUp().ContainsKey(key) && ComponentScript.GetAllLookUp()[key] != sel)
+                {
+                    var toDestroy = ComponentScript.GetAllLookUp()[key];
+                    if (toDestroy != null) Destroy(toDestroy);
+                }
+                ComponentScript.GetAllLookUp()[key] = sel;
+            }
+            SaveManager.SaveLookUp();
+            gameManager.compileText.enabled = true;
+            gameManager.isCompiled = false;
+            return;
+        }
+
+        // If not dragging, allow marquee as before
+        if (!isDragging)
+        {
+            // ...existing marquee code...
+            if (Input.GetMouseButtonDown(0))
+            {
+                marqueeActive = true;
+                marqueeStart = mainCam.ScreenToWorldPoint(Input.mousePosition);
+                marqueeStart.z = 0;
+            }
+            if (Input.GetMouseButton(0) && marqueeActive)
+            {
+                marqueeEnd = mainCam.ScreenToWorldPoint(Input.mousePosition);
+                marqueeEnd.z = 0;
+                DrawFilledMarquee(marqueeStart, marqueeEnd);
+            }
+            if (Input.GetMouseButtonUp(0) && marqueeActive)
+            {
+                marqueeActive = false;
+                marqueeFillObj.SetActive(false);
+                SelectInRect(marqueeStart, marqueeEnd);
+            }
         }
     }
     private void DrawFilledMarquee(Vector3 start, Vector3 end)

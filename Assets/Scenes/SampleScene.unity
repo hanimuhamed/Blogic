@@ -623,6 +623,8 @@ MonoBehaviour:
   mainCam: {fileID: 519420031}
   workspace: {fileID: 193666964}
   marqueeColor: {r: 1, g: 1, b: 1, a: 0.011764706}
+  selectedObjects: []
+  gameManager: {fileID: 512963078}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
