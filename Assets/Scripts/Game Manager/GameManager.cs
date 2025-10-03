@@ -11,8 +11,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI compileText;
     public bool isCompiled = true;
     public static bool hasCircularDependency = false;
-    //public static float simTime = 0.01f;
+    public static float simTime = 0.25f;
     public TMP_InputField refreshRateInput;
+    private bool clockToggle = false;
     
     void Awake()
     {
@@ -22,19 +23,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         compileText.color = Color.white;
-        //refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
+        refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
         compileText.text = "Press Space to Compile.";
         //StartCoroutine(RunSimulation());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
     {
-        ClockComponent.GlobalClockUpdate(clockTime);
-        if (Input.GetKeyDown(KeyCode.Space) && !isCompiled)
-        {
-            //isSimulationRunning = true;
-            StartCoroutine(RunSimulation());
-        }
+        if (Input.GetKeyDown(KeyCode.Escape))                   Application.Quit();
+        if (Input.GetKeyDown(KeyCode.P))                        clockToggle = !clockToggle;
+        if (clockToggle)                                        ClockComponent.GlobalClockUpdate(simTime);
+        if (Input.GetKeyDown(KeyCode.Space) && !isCompiled)     StartCoroutine(RunSimulation());
     }
 
     public IEnumerator RunSimulation()
@@ -119,11 +118,11 @@ public class GameManager : MonoBehaviour
         SaveManager.SaveLookUp();
         yield break;
     }
-    /*public void SetRefreshRate(string rate)
+    public void SetRefreshRate(string rate)
     {
         if (string.IsNullOrEmpty(rate)) return;
 
-        Debug.Log("Trying to set simulation refresh rate to " + rate + " Hz.");
+        //Debug.Log("Trying to set simulation refresh rate to " + rate + " Hz.");
 
         if (float.TryParse(rate, out float result))
         {
@@ -133,14 +132,14 @@ public class GameManager : MonoBehaviour
             // Update the InputField text in case the user typed a value out of bounds
             refreshRateInput.text = clamped.ToString();
 
-            Debug.Log("Simulation refresh rate set to " + clamped + " Hz (" + simTime + " seconds per update).");
+            //Debug.Log("Simulation refresh rate set to " + clamped + " Hz (" + simTime + " seconds per update).");
         }
         else
         {
-            Debug.LogWarning("Invalid refresh rate: " + rate);
+            //Debug.LogWarning("Invalid refresh rate: " + rate);
             // Optionally reset to the previous valid value
             refreshRateInput.text = (1 / simTime).ToString();
         }
-    }*/
+    }
 
 }
