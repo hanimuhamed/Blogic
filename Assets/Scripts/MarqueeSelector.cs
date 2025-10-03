@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MarqueeSelector : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class MarqueeSelector : MonoBehaviour
     private GameObject marqueeFillObj;
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
+    public List<GameObject> selectedObjects = new List<GameObject>();
 
     void Start()
     {
@@ -41,9 +43,9 @@ public class MarqueeSelector : MonoBehaviour
         {
             marqueeActive = false;
             marqueeFillObj.SetActive(false);
+            SelectInRect(marqueeStart, marqueeEnd); // <-- Select on drag end
         }
     }
-
     private void DrawFilledMarquee(Vector3 start, Vector3 end)
     {
         marqueeFillObj.SetActive(true);
@@ -80,5 +82,49 @@ public class MarqueeSelector : MonoBehaviour
     {
         if (marqueeFillObj != null)
             marqueeFillObj.SetActive(false);
+    }
+    public void SelectInRect(Vector3 start, Vector3 end)
+    {
+        selectedObjects.Clear();
+
+        Vector3 min = Vector3.Min(start, end);
+        Vector3 max = Vector3.Max(start, end);
+
+        foreach (var obj in ComponentScript.GetAllLookUp().Values)
+        {
+            if (obj == null) continue;
+            // Only select SourceComponent or WireComponent
+            if (obj.GetComponent<SourceComponent>() == null && obj.GetComponent<WireComponent>() == null)
+                continue;
+
+            Vector3 pos = obj.transform.position;
+            if (pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y)
+            {
+                selectedObjects.Add(obj);
+                // Enable highlight child
+                var highlight = obj.transform.Find("Highlight");
+                if (highlight != null)
+                    highlight.gameObject.SetActive(true);
+            }
+            else
+            {
+                // Disable highlight if not selected
+                var highlight = obj.transform.Find("Highlight");
+                if (highlight != null)
+                    highlight.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void ClearSelection()
+    {
+        foreach (var obj in selectedObjects)
+        {
+            if (obj == null) continue;
+            var highlight = obj.transform.Find("Highlight");
+            if (highlight != null)
+                highlight.gameObject.SetActive(false);
+        }
+        selectedObjects.Clear();
     }
 }

@@ -80,15 +80,16 @@ public class PlaceComponent : MonoBehaviour
         if (index == 6) // Marquee mode
         {
             if (pooledGhostObj != null)
-                {
-                    pooledGhostObj.SetActive(false);
-                }
+            {
+                pooledGhostObj.SetActive(false);
+            }
             marqueeSelector.HandleMarquee();
             return;
         }
         else
         {
             marqueeSelector.HideMarquee();
+            marqueeSelector.ClearSelection();
         }
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject() ||
         x < -width || x > width || y < -height || y > height)
