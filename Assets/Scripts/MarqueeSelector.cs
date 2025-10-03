@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class ClipboardEntry
+{
+    public int prefabIndex;
+    public Vector2Int relativePos;
+}
 public class MarqueeSelector : MonoBehaviour
 {
     public Camera mainCam;
@@ -18,7 +24,11 @@ public class MarqueeSelector : MonoBehaviour
     private Dictionary<GameObject, Vector3> dragOffsets = new Dictionary<GameObject, Vector3>();
     private Dictionary<GameObject, (int, int)> originalPositions = new Dictionary<GameObject, (int, int)>();
     public GameManager gameManager;
-
+    private List<ClipboardEntry> clipboard = new List<ClipboardEntry>();
+    private Vector2Int clipboardOrigin;
+    private bool pasteMode = false;
+    private List<GameObject> ghostGroup = new List<GameObject>();
+    public Components components;
     void Start()
     {
         marqueeFillObj = new GameObject("MarqueeFill");
@@ -28,6 +38,20 @@ public class MarqueeSelector : MonoBehaviour
         meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
         meshRenderer.material.color = marqueeColor;
         marqueeFillObj.SetActive(false);
+    }
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            if (Input.GetKeyDown(KeyCode.C)) CopySelection();
+            if (Input.GetKeyDown(KeyCode.X)) CutSelection();
+            if (Input.GetKeyDown(KeyCode.V)) PasteClipboard();
+            if (Input.GetKeyDown(KeyCode.D)) DuplicateSelection();         
+        }
+        if (Input.GetKeyDown(KeyCode.Delete)) DeleteSelection();
+
+        if (pasteMode)
+            UpdatePasteGhost();
     }
 
     public void HandleMarquee()
@@ -176,7 +200,7 @@ public class MarqueeSelector : MonoBehaviour
         {
             if (obj == null) continue;
             // Only select SourceComponent or WireComponent
-            if (obj.GetComponent<SourceComponent>() == null && obj.GetComponent<WireComponent>() == null)
+            if (obj.GetComponent<SourceComponent>() == null && obj.GetComponent<WireComponent>() == null && obj.GetComponent<CrossComponent>() == null)
                 continue;
 
             Vector3 pos = obj.transform.position;
@@ -208,5 +232,192 @@ public class MarqueeSelector : MonoBehaviour
                 highlight.gameObject.SetActive(false);
         }
         selectedObjects.Clear();
+    }
+    public void CopySelection()
+    {
+        clipboard.Clear();
+        if (selectedObjects.Count == 0) return;
+        // Use the top-left as the origin
+        int minX = int.MaxValue, minY = int.MaxValue;
+        foreach (var obj in selectedObjects)
+        {
+            int x = Mathf.RoundToInt(obj.transform.position.x);
+            int y = Mathf.RoundToInt(obj.transform.position.y);
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+        }
+        clipboardOrigin = new Vector2Int(minX, minY);
+
+        foreach (var obj in selectedObjects)
+        {
+            int x = Mathf.RoundToInt(obj.transform.position.x);
+            int y = Mathf.RoundToInt(obj.transform.position.y);
+            int prefabIndex = GetPrefabIndex(obj);
+            clipboard.Add(new ClipboardEntry
+            {
+                prefabIndex = prefabIndex,
+                relativePos = new Vector2Int(x - minX, y - minY)
+            });
+        }
+    }
+    public void CutSelection()
+    {
+        CopySelection();
+        DeleteSelection();
+    }
+    public void DeleteSelection()
+    {
+        foreach (var obj in selectedObjects)
+        {
+            int x = Mathf.RoundToInt(obj.transform.position.x);
+            int y = Mathf.RoundToInt(obj.transform.position.y);
+            var key = (x, y);
+            if (ComponentScript.GetAllLookUp().ContainsKey(key) && ComponentScript.GetAllLookUp()[key] == obj)
+                ComponentScript.GetAllLookUp().Remove(key);
+            Destroy(obj);
+        }
+        selectedObjects.Clear();
+    }
+    public void DuplicateSelection()
+    {
+        CopySelection();
+        StartPasteMode(useClipboard: true, useSelectionAsGhost: true);
+    }
+    public void PasteClipboard()
+    {
+        if (clipboard.Count == 0) return;
+        StartPasteMode(useClipboard: true, useSelectionAsGhost: false);
+    }
+    private void StartPasteMode(bool useClipboard, bool useSelectionAsGhost)
+    {
+        pasteMode = true;
+        ClearGhostGroup();
+
+        List<ClipboardEntry> source = useClipboard ? clipboard : new List<ClipboardEntry>();
+        if (useSelectionAsGhost)
+        {
+            // Use selected objects as ghost group for duplicate
+            int minX = int.MaxValue, minY = int.MaxValue;
+            foreach (var obj in selectedObjects)
+            {
+                int x = Mathf.RoundToInt(obj.transform.position.x);
+                int y = Mathf.RoundToInt(obj.transform.position.y);
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
+            }
+            clipboardOrigin = new Vector2Int(minX, minY);
+            source.Clear();
+            foreach (var obj in selectedObjects)
+            {
+                int x = Mathf.RoundToInt(obj.transform.position.x);
+                int y = Mathf.RoundToInt(obj.transform.position.y);
+                int prefabIndex = GetPrefabIndex(obj);
+                source.Add(new ClipboardEntry
+                {
+                    prefabIndex = prefabIndex,
+                    relativePos = new Vector2Int(x - minX, y - minY)
+                });
+            }
+        }
+
+        // Instantiate ghost group (semi-transparent)
+        foreach (var entry in source)
+        {
+            var prefab = components.prefabs[entry.prefabIndex];
+            var ghost = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            SetGhostVisual(ghost);
+            ghostGroup.Add(ghost);
+        }
+    }
+
+    // Call this in Update() if pasteMode is true:
+    public void UpdatePasteGhost()
+    {
+        if (!pasteMode || clipboard.Count == 0) return;
+        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        int mx = Mathf.RoundToInt(mouseWorld.x);
+        int my = Mathf.RoundToInt(mouseWorld.y);
+
+        // Check bounds
+        bool canPaste = true;
+        for (int i = 0; i < clipboard.Count; i++)
+        {
+            int x = mx + clipboard[i].relativePos.x;
+            int y = my + clipboard[i].relativePos.y;
+            if (x < -TileSpawner.width || x > TileSpawner.width || y < -TileSpawner.height || y > TileSpawner.height)
+            {
+                canPaste = false;
+                break;
+            }
+        }
+
+        // Move ghost group
+        for (int i = 0; i < ghostGroup.Count; i++)
+        {
+            int x = mx + clipboard[i].relativePos.x;
+            int y = my + clipboard[i].relativePos.y;
+            ghostGroup[i].transform.position = new Vector3(x, y, 0);
+            ghostGroup[i].SetActive(canPaste);
+        }
+
+        // Place on click
+        if (canPaste && Input.GetMouseButtonDown(0))
+        {
+            PlaceClipboardAt(mx, my);
+            pasteMode = false;
+            ClearGhostGroup();
+        }
+        // Cancel paste on right click
+        if (Input.GetMouseButtonDown(1))
+        {
+            pasteMode = false;
+            ClearGhostGroup();
+        }
+    }
+
+    private void PlaceClipboardAt(int mx, int my)
+    {
+        // Place all objects, replacing existing
+        List<GameObject> newSelection = new List<GameObject>();
+        for (int i = 0; i < clipboard.Count; i++)
+        {
+            int x = mx + clipboard[i].relativePos.x;
+            int y = my + clipboard[i].relativePos.y;
+            var key = (x, y);
+            if (ComponentScript.GetAllLookUp().ContainsKey(key))
+            {
+                var toDestroy = ComponentScript.GetAllLookUp()[key];
+                if (toDestroy != null) Destroy(toDestroy);
+            }
+            var prefab = components.prefabs[clipboard[i].prefabIndex];
+            var obj = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity);
+            ComponentScript.SetLookUp(obj);
+            newSelection.Add(obj);
+        }
+        selectedObjects = newSelection;
+    }
+
+    private void ClearGhostGroup()
+    {
+        foreach (var g in ghostGroup)
+            Destroy(g);
+        ghostGroup.Clear();
+    }
+
+    private void SetGhostVisual(GameObject obj)
+    {
+        var sr = obj.GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 0.5f); // semi-transparent
+        // Optionally disable scripts/colliders
+    }
+    private int GetPrefabIndex(GameObject obj)
+    {
+        for (int i = 0; i < ComponentScript.PrefabNames.Length; i++)
+        {
+            if (obj.name.StartsWith(ComponentScript.PrefabNames[i]))
+                return i;
+        }
+        return -1;
     }
 }
