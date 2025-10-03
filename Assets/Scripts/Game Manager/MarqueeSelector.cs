@@ -27,7 +27,7 @@ public class MarqueeSelector : MonoBehaviour
     public GameManager gameManager;
     private List<ClipboardEntry> clipboard = new List<ClipboardEntry>();
     private Vector2Int clipboardOrigin;
-    public bool pasteMode = false; 
+    private bool pasteMode = false; 
     private List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
     private bool isDuplicateMode = false;

@@ -12,7 +12,7 @@ public class UndoRedoManager : MonoBehaviour
     // Pool: one list per prefab index
     private List<GameObject>[] pools;
     private GameManager gameManager;
-    private float undoRedoCooldown = 0.1f; // seconds
+    private float undoRedoCooldown = 0.25f; // seconds
     private float undoRedoTimer = 0f;
 
     void Start()
