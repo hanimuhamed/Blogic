@@ -27,7 +27,7 @@ public class MarqueeSelector : MonoBehaviour
     public GameManager gameManager;
     private List<ClipboardEntry> clipboard = new List<ClipboardEntry>();
     private Vector2Int clipboardOrigin;
-    private bool pasteMode = false;
+    public bool pasteMode = false; 
     private List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
     private bool isDuplicateMode = false;
@@ -52,15 +52,15 @@ public class MarqueeSelector : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.D)) DuplicateSelection();         
         }
         if (Input.GetKeyDown(KeyCode.Delete)) DeleteSelection();
-
+        if (Input.GetKeyDown(KeyCode.H)) HideMarquee();
         if (pasteMode)
             UpdatePasteGhost();
     }
-    public void HandleMarquee()
+    public void HandleMarquee(Vector3 mouseWorld)
     {
-        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        if (isDuplicateMode) return; // Disable marquee when duplicating
+        //mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
-
         // Start drag if mouse is over a selected object and left mouse down
         if (!isDragging && Input.GetMouseButtonDown(0))
         {
@@ -101,6 +101,7 @@ public class MarqueeSelector : MonoBehaviour
             int minOffsetY = int.MaxValue, maxOffsetY = int.MinValue;
             foreach (var sel in selectedObjects)
             {
+                if (!dragOffsets.ContainsKey(sel)) continue;
                 int offsetX = Mathf.RoundToInt(dragOffsets[sel].x);
                 int offsetY = Mathf.RoundToInt(dragOffsets[sel].y);
                 if (offsetX < minOffsetX) minOffsetX = offsetX;
@@ -122,6 +123,7 @@ public class MarqueeSelector : MonoBehaviour
 
             foreach (var sel in selectedObjects)
             {
+                if (!dragOffsets.ContainsKey(sel)) continue;
                 Vector3 newPos = clampedMouseWorld + dragOffsets[sel];
                 newPos.x = Mathf.Round(newPos.x);
                 newPos.y = Mathf.Round(newPos.y);
@@ -213,7 +215,10 @@ public class MarqueeSelector : MonoBehaviour
     public void HideMarquee()
     {
         if (marqueeFillObj != null)
+        {
+            //Debug.Log("Marquee hidden");
             marqueeFillObj.SetActive(false);
+        }
     }
     public void SelectInRect(Vector3 start, Vector3 end)
     {
@@ -319,7 +324,6 @@ public class MarqueeSelector : MonoBehaviour
     {
         pasteMode = true;
         ClearGhostGroup();
-
         List<ClipboardEntry> source = useClipboard ? clipboard : new List<ClipboardEntry>();
         if (useSelectionAsGhost)
         {
@@ -355,6 +359,7 @@ public class MarqueeSelector : MonoBehaviour
             SetGhostVisual(ghost);
             ghostGroup.Add(ghost);
         }
+        ClearSelection();
     }
     public void UpdatePasteGhost()
     {
@@ -401,10 +406,14 @@ public class MarqueeSelector : MonoBehaviour
         // Cancel paste on right click
         if (Input.GetMouseButtonDown(1))
         {
-            pasteMode = false;
-            isDuplicateMode = false;
-            ClearGhostGroup();
+            CancelPasteMode();
         }
+    }
+    public void CancelPasteMode()
+    {
+        pasteMode = false;
+        isDuplicateMode = false;
+        ClearGhostGroup();
     }
     private void PlaceClipboardAt(int mx, int my)
     {

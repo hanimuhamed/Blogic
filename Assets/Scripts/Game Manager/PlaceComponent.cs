@@ -83,13 +83,14 @@ public class PlaceComponent : MonoBehaviour
             {
                 pooledGhostObj.SetActive(false);
             }
-            marqueeSelector.HandleMarquee();
+            marqueeSelector.HandleMarquee(mouseWorldPos);
             return;
         }
         else
         {
             marqueeSelector.HideMarquee();
             marqueeSelector.ClearSelection();
+            marqueeSelector.CancelPasteMode();
         }
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject() ||
         x < -width || x > width || y < -height || y > height)
@@ -151,7 +152,7 @@ public class PlaceComponent : MonoBehaviour
         bool isEraser = index == 5;
         bool isErasing = Input.GetMouseButton(0) && isEraser || Input.GetMouseButton(1) && Input.GetMouseButton(0);
         Sprite spriteToShow = null;
-        float alpha = 0.25f;
+        float alpha = 0.05f;
 
         if (isEraser || (Input.GetMouseButton(1) && Input.GetMouseButton(0)))
         {

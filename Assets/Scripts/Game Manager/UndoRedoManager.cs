@@ -12,6 +12,8 @@ public class UndoRedoManager : MonoBehaviour
     // Pool: one list per prefab index
     private List<GameObject>[] pools;
     private GameManager gameManager;
+    private float undoRedoCooldown = 0.1f; // seconds
+    private float undoRedoTimer = 0f;
 
     void Start()
     {
@@ -37,33 +39,47 @@ public class UndoRedoManager : MonoBehaviour
                 lastState = currentState;
             }
         }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
+        undoRedoTimer += Time.deltaTime;
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            if (undoStack.Count > 1)
+            if (undoRedoTimer < undoRedoCooldown)
             {
-                redoStack.Push(undoStack.Pop());
-                string prevState = undoStack.Peek();
-                ApplyStateDelta(prevState);
-                lastState = prevState;
-                gameManager.compileText.enabled = true;
-                gameManager.isCompiled = false;
+                return;
             }
-            //StartCoroutine(GameManager.RunSimulation());
+            else if (Input.GetKey(KeyCode.Y) || (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.Z)))
+            {
+                Redo();
+                undoRedoTimer = 0f;
+            }
+            else if (Input.GetKey(KeyCode.Z))
+            {
+                Undo();
+                undoRedoTimer = 0f;
+            }
         }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Y))
+    }
+    private void Undo()
+    {
+        if (undoStack.Count > 1)
         {
-            if (redoStack.Count > 0)
-            {
-                string redoState = redoStack.Pop();
-                undoStack.Push(redoState);
-                ApplyStateDelta(redoState);
-                lastState = redoState;
-                gameManager.compileText.enabled = true;
-                gameManager.isCompiled = false;
-            }
-            //StartCoroutine(GameManager.RunSimulation());
+            redoStack.Push(undoStack.Pop());
+            string prevState = undoStack.Peek();
+            ApplyStateDelta(prevState);
+            lastState = prevState;
+            gameManager.compileText.enabled = true;
+            gameManager.isCompiled = false;
+        }
+    }
+    private void Redo()
+    {
+        if (redoStack.Count > 0)
+        {
+            string redoState = redoStack.Pop();
+            undoStack.Push(redoState);
+            ApplyStateDelta(redoState);
+            lastState = redoState;
+            gameManager.compileText.enabled = true;
+            gameManager.isCompiled = false;
         }
     }
 
