@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class GameManager : MonoBehaviour
@@ -13,27 +14,30 @@ public class GameManager : MonoBehaviour
     public static bool hasCircularDependency = false;
     public static float simTime = 0.25f;
     public TMP_InputField refreshRateInput;
-    private bool isPaused = false;
-    
+    public Button pauseButton;
+    public Sprite pauseSprite;
+    public Sprite playSprite;
+    private bool isPaused = true;
+
     void Awake()
     {
         //QualitySettings.vSyncCount = 0; 
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
     }
     void Start()
     {
         compileText.color = Color.white;
         refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
-        compileText.text = "Press Enter Key to Compile.";
+        compileText.text = "Press Enter to Compile.";
         //StartCoroutine(RunSimulation());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))                   Application.Quit();
-        if (Input.GetKeyDown(KeyCode.Space))                        isPaused = !isPaused;
-        if (!isPaused)                                        ClockComponent.GlobalClockUpdate(simTime);
-        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled)     StartCoroutine(RunSimulation());
+        if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+        if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
+        if (!isPaused) ClockComponent.GlobalClockUpdate(simTime);
+        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(RunSimulation());
     }
 
     public IEnumerator RunSimulation()
@@ -120,7 +124,7 @@ public class GameManager : MonoBehaviour
             hasCircularDependency = false;
             yield break;
         }*/
-        compileText.text = "Press Enter Key to Compile.";
+        compileText.text = "Press Enter to Compile.";
         compileText.enabled = false;
         compileText.color = Color.white;
         SaveManager.SaveLookUp();
@@ -148,6 +152,22 @@ public class GameManager : MonoBehaviour
             // Optionally reset to the previous valid value
             refreshRateInput.text = (1 / simTime).ToString();
         }
+    }
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+        if (isPaused)
+        {
+            pauseButton.image.sprite = playSprite;
+        }
+        else
+        {
+            pauseButton.image.sprite = pauseSprite;
+        }
+    }
+    public bool IsPaused()
+    {
+        return isPaused;
     }
 
 }

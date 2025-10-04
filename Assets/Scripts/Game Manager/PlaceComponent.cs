@@ -60,14 +60,6 @@ public class PlaceComponent : MonoBehaviour
         lastMousePos = Input.mousePosition;
         x = Mathf.RoundToInt(mouseWorldPos.x);
         y = Mathf.RoundToInt(mouseWorldPos.y);
-        
-
-        
-        if (ComponentScript.componentIndex != lastIndex)
-        {
-            index = ComponentScript.componentIndex;
-            lastIndex = index;
-        }
         if (Input.GetMouseButtonDown(1))
         {
             InputComponent input = ComponentScript.GetLookUp(x, y)?.GetComponent<InputComponent>();
@@ -76,6 +68,22 @@ public class PlaceComponent : MonoBehaviour
                 input.GetComponent<PopIn>().AnimatePop();
                 input.Toggle();   
             }
+        }
+        if (!gameManager.IsPaused())
+        {
+            if (pooledGhostObj != null)
+            {
+                pooledGhostObj.SetActive(false);
+            }
+            marqueeSelector.HideMarquee();
+            marqueeSelector.ClearSelection();
+            marqueeSelector.CancelPasteMode();
+            return;
+        }
+        if (ComponentScript.componentIndex != lastIndex)
+        {
+            index = ComponentScript.componentIndex;
+            lastIndex = index;
         }
         if (index == 6) // Marquee mode
         {

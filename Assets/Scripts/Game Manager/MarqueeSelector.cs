@@ -127,7 +127,7 @@ public class MarqueeSelector : MonoBehaviour
                 Vector3 newPos = clampedMouseWorld + dragOffsets[sel];
                 newPos.x = Mathf.Round(newPos.x);
                 newPos.y = Mathf.Round(newPos.y);
-                newPos.z = 0;
+                newPos.z = -1;
                 sel.transform.position = newPos;
             }
             return;
@@ -356,7 +356,7 @@ public class MarqueeSelector : MonoBehaviour
         {
             var prefab = components.prefabs[entry.prefabIndex];
             var ghost = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-            SetGhostVisual(ghost);
+            //SetGhostVisual(ghost);
             ghostGroup.Add(ghost);
         }
         ClearSelection();
@@ -386,7 +386,7 @@ public class MarqueeSelector : MonoBehaviour
         {
             int x = mx + clipboard[i].relativePos.x;
             int y = my + clipboard[i].relativePos.y;
-            ghostGroup[i].transform.position = new Vector3(x, y, 0);
+            ghostGroup[i].transform.position = new Vector3(x, y, -1);
             ghostGroup[i].SetActive(canPaste);
         }
 
@@ -406,6 +406,8 @@ public class MarqueeSelector : MonoBehaviour
         // Cancel paste on right click
         if (Input.GetMouseButtonDown(1))
         {
+            HideMarquee();
+            ClearSelection();
             CancelPasteMode();
         }
     }
@@ -441,13 +443,6 @@ public class MarqueeSelector : MonoBehaviour
         foreach (var g in ghostGroup)
             Destroy(g);
         ghostGroup.Clear();
-    }
-    private void SetGhostVisual(GameObject obj)
-    {
-        var sr = obj.GetComponent<SpriteRenderer>();
-        if (sr != null)
-            sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 0.5f); // semi-transparent
-        // Optionally disable scripts/colliders
     }
     private int GetPrefabIndex(GameObject obj)
     {
