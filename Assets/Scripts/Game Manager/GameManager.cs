@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public static bool hasCircularDependency = false;
     public static float simTime = 0.25f;
     public TMP_InputField refreshRateInput;
-    private bool clockToggle = false;
+    private bool isPaused = false;
     
     void Awake()
     {
@@ -24,22 +24,22 @@ public class GameManager : MonoBehaviour
     {
         compileText.color = Color.white;
         refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
-        compileText.text = "Press Space to Compile.";
+        compileText.text = "Press Enter Key to Compile.";
         //StartCoroutine(RunSimulation());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))                   Application.Quit();
-        if (Input.GetKeyDown(KeyCode.P))                        clockToggle = !clockToggle;
-        if (clockToggle)                                        ClockComponent.GlobalClockUpdate(simTime);
-        if (Input.GetKeyDown(KeyCode.Space) && !isCompiled)     StartCoroutine(RunSimulation());
+        if (Input.GetKeyDown(KeyCode.Space))                        isPaused = !isPaused;
+        if (!isPaused)                                        ClockComponent.GlobalClockUpdate(simTime);
+        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled)     StartCoroutine(RunSimulation());
     }
 
     public IEnumerator RunSimulation()
     {
         isCompiled = true;
-        compileText.text = "Compiling...";
+        compileText.text = "Compiling";
         compileText.color = Color.white;
         yield return null; // Wait a frame to show the compiling text
         SourceComponent.Refresh();
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
             cluster.connectedNots.Clear();
             Destroy(cluster.gameObject);
             destroyCount++;
-            if (destroyCount % 20 == 0) yield return null; // Yield every 20 destroys
+            if (destroyCount % 20 == 0) yield return null; // Yield every 20 destroys           
         }
         SourceComponent.allSources.Clear();
         for (int i = -TileSpawner.width; i < TileSpawner.width; i++)
@@ -88,20 +88,28 @@ public class GameManager : MonoBehaviour
                 }
                 else if (obj.GetComponent<NotComponent>() != null)
                 {
-                    NotComponent notComponent = obj.GetComponent<NotComponent>();
-                    notComponent.SetState(false);
-                    SourceComponent.allSources.Add(notComponent);
+                    SourceComponent.allSources.Add(obj.GetComponent<NotComponent>());
                 }
             }
         }
         int srcCount = 0;
+        foreach (var cluster in WireCluster.allClusters)
+        {
+            if (cluster == null) continue;
+            if (cluster.isInitialized) continue;
+            var visited = new Dictionary<(int, int), int>();
+            SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(visited));
+            SimulationDriver.Instance.RunAll();
+            srcCount++;
+            if (srcCount % 20 == 0) yield return null; // Yield every 20 clusters
+        }
         foreach (var source in SourceComponent.allSources)
         {
             if (source == null) continue;
             if (source.IsInitialized()) continue;
             var visited = new Dictionary<(int, int), int>();
             SimulationDriver.Instance.EnqueueRoutine(() => source.UpdateNext(visited));
-            SimulationDriver.Instance.RunAll();       
+            SimulationDriver.Instance.RunAll();
             srcCount++;
             if (srcCount % 20 == 0) yield return null; // Yield every 20 sources
         }
@@ -112,7 +120,7 @@ public class GameManager : MonoBehaviour
             hasCircularDependency = false;
             yield break;
         }*/
-        compileText.text = "Press Space to Compile.";
+        compileText.text = "Press Enter Key to Compile.";
         compileText.enabled = false;
         compileText.color = Color.white;
         SaveManager.SaveLookUp();
