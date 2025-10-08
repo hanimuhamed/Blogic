@@ -97,6 +97,31 @@ public class GameManager : MonoBehaviour
             }
         }
         int srcCount = 0;
+        foreach (var source in SourceComponent.allSources)
+        {
+            if (source == null) continue;
+            Vector2Int pos = new Vector2Int(
+                Mathf.RoundToInt(source.transform.position.x),
+                Mathf.RoundToInt(source.transform.position.y)
+            );
+            if (source is NotComponent)
+            {
+                if (ComponentScript.GetLookUp(pos.x - 1, pos.y)?.GetComponent<SourceComponent>() != null)
+                {
+                    source.inputSource = ComponentScript.GetLookUp(pos.x - 1, pos.y).GetComponent<SourceComponent>();
+                }     
+            }
+            while (ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<CrossComponent>() != null)
+            {
+                pos.x += 1;
+            }
+            if (ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<NotComponent>() != null)
+            {
+                source.connectedNot = ComponentScript.GetLookUp(pos.x + 1, pos.y).GetComponent<NotComponent>();
+            }
+            srcCount++;
+            if (srcCount % 20 == 0) yield return null; 
+        }
         foreach (var cluster in WireCluster.allClusters)
         {
             if (cluster == null) continue;

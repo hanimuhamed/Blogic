@@ -4,12 +4,17 @@ using System.Linq;
 
 public class NotComponent : SourceComponent
 {
+
     public void Start()
     {
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
         errorHighlight = gameObject.transform.GetChild(0).gameObject;
         errorHighlight.SetActive(false);
+        /*pos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x),
+            Mathf.RoundToInt(transform.position.y)
+        );*/
     }
     public override void UpdateState()
     {
@@ -21,10 +26,9 @@ public class NotComponent : SourceComponent
         else
         {
             //Debug.Log("No input cluster at " + pos);
-            SourceComponent source = ComponentScript.GetLookUp(pos.x - 1, pos.y)?.GetComponent<SourceComponent>();
-            if (source != null)
+            if (inputSource != null)
             {
-                SetState(!source.IsOn());
+                SetState(!inputSource.IsOn());
             }
             else
             {
@@ -65,16 +69,11 @@ public class NotComponent : SourceComponent
             //Debug.Log("Enqueuing UpdateNext for cluster " + cluster.GetInstanceID());
             SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(localVisited));
         }
-        pos = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x),
-            Mathf.RoundToInt(transform.position.y)
-        );
-        NotComponent nextNot = ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<NotComponent>();
-        if (nextNot != null)
+        if (connectedNot != null)
         {
-            if (localVisited.ContainsKey((gameObject.GetInstanceID(), nextNot.GetInstanceID())))
+            if (localVisited.ContainsKey((gameObject.GetInstanceID(), connectedNot.GetInstanceID())))
             {
-                if (localVisited[(gameObject.GetInstanceID(), nextNot.GetInstanceID())] >= 0)
+                if (localVisited[(gameObject.GetInstanceID(), connectedNot.GetInstanceID())] >= 0)
                 {
                     //Debug.Log("skip " + GetPos());
                     errorHighlight.SetActive(true);
@@ -83,15 +82,15 @@ public class NotComponent : SourceComponent
                 }
                 else 
                 {
-                    localVisited[(gameObject.GetInstanceID(), nextNot.GetInstanceID())]++;
+                    localVisited[(gameObject.GetInstanceID(), connectedNot.GetInstanceID())]++;
                 }
             }
             else
             {
-                localVisited.Add((gameObject.GetInstanceID(), nextNot.GetInstanceID()), 0);
+                localVisited.Add((gameObject.GetInstanceID(), connectedNot.GetInstanceID()), 0);
             }
-           // Debug.Log("Enqueuing UpdateNext for NOT gate " + nextNot.GetPos());
-            SimulationDriver.Instance.EnqueueRoutine(() => nextNot.UpdateNext(localVisited));
+           // Debug.Log("Enqueuing UpdateNext for NOT gate " + connectedNot.GetPos());
+            SimulationDriver.Instance.EnqueueRoutine(() => connectedNot.UpdateNext(localVisited));
         }
         //Debug.Log("Running all enqueued routines: " + GetPos());
         //SimulationDriver.Instance.RunAll();

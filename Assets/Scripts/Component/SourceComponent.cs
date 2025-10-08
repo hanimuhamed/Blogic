@@ -9,19 +9,25 @@ public class SourceComponent : MonoBehaviour
     public static List<SourceComponent> allSources = new List<SourceComponent>();
     public List<WireCluster> connectedClusters = new List<WireCluster>();
     public WireCluster inputCluster;
+    public NotComponent connectedNot;
+    public SourceComponent inputSource;
     protected bool isOn = false;
     public bool isInitialized = false;
     public Color darkColor = new Color(0.6f, 0.6f, 0.6f);
-    protected Vector2Int pos;
+    //protected Vector2Int pos;
     protected SpriteRenderer sr;
     protected GameObject errorHighlight;
 
     void Start()
     {
-        
+
         //allSources.Add(this);
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
+        /*pos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x),
+            Mathf.RoundToInt(transform.position.y)
+        );*/
     }
     public void AddWire(WireCluster wire)
     {
@@ -139,16 +145,11 @@ public class SourceComponent : MonoBehaviour
             //Debug.Log("Enqueuing UpdateNext for cluster " + cluster.GetInstanceID());
             SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(localVisited));
         }
-        pos = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x),
-            Mathf.RoundToInt(transform.position.y)
-        );
-        NotComponent nextNot = ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<NotComponent>();
-        if (nextNot != null)
+        if (connectedNot != null)
         {
-            localVisited.Add((gameObject.GetInstanceID(), nextNot.GetInstanceID()), 0);
-            //Debug.Log("Enqueuing UpdateNext for NOT gate " + nextNot.GetPos());
-            SimulationDriver.Instance.EnqueueRoutine(() => nextNot.UpdateNext(localVisited));
+            localVisited.Add((gameObject.GetInstanceID(), connectedNot.GetInstanceID()), 0);
+            //Debug.Log("Enqueuing UpdateNext for NOT gate " + connectedNot.GetPos());
+            SimulationDriver.Instance.EnqueueRoutine(() => connectedNot.UpdateNext(localVisited));
         }
         //Debug.Log("Running all enqueued routines: " + pos);
         //SimulationDriver.Instance.RunAll();
@@ -176,8 +177,8 @@ public class SourceComponent : MonoBehaviour
             //source.isInitialized = false;
             source.connectedClusters.Clear();
             source.inputCluster = null;
-            if (!(source is NotComponent)) continue;  
-            source.errorHighlight.SetActive(false); 
+            if (!(source is NotComponent)) continue;
+            source.errorHighlight.SetActive(false);
         }
         return;
     }
@@ -193,8 +194,12 @@ public class SourceComponent : MonoBehaviour
     {
         NullifyState();
     }*/
-    public Vector2Int GetPos()
+    /*public Vector2Int GetPos()
     {
         return pos;
+    }*/
+    public void SetConnectedNot(NotComponent not)
+    {
+        connectedNot = not;
     }
 }
