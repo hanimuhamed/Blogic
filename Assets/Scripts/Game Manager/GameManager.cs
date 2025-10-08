@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         compileText.color = Color.white;
         refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
         compileText.text = "Press Enter to Compile.";
-        //StartCoroutine(RunSimulation());
+        StartCoroutine(RunSimulation());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
@@ -47,8 +47,21 @@ public class GameManager : MonoBehaviour
             simText.text = "Edit Mode";
         }
         if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(RunSimulation());
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S) && isCompiled)
+        {
+            SaveManager.SaveLookUp();
+            StartCoroutine(DisplaySaveText(1.0f));
+        }
     }
 
+    public IEnumerator DisplaySaveText(float delay)
+    {
+        compileText.text = "Saving...";
+        compileText.enabled = true;
+        yield return new WaitForSeconds(delay);
+        compileText.enabled = false;
+        compileText.text = "Press Enter to Compile.";
+    }
     public IEnumerator RunSimulation()
     {
         isCompiled = true;
@@ -109,6 +122,8 @@ public class GameManager : MonoBehaviour
         foreach (var source in SourceComponent.allSources)
         {
             if (source == null) continue;
+            source.connectedNot = null;
+            source.inputSource = null;
             Vector2Int pos = new Vector2Int(
                 Mathf.RoundToInt(source.transform.position.x),
                 Mathf.RoundToInt(source.transform.position.y)
@@ -135,7 +150,7 @@ public class GameManager : MonoBehaviour
                 source.connectedNot = ComponentScript.GetLookUp(pos.x + 1, pos.y).GetComponent<NotComponent>();
             }
             srcCount++;
-            if (srcCount % 20 == 0) yield return null; 
+            if (srcCount % 20 == 0) yield return null;
         }
         foreach (var cluster in WireCluster.allClusters)
         {

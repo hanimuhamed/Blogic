@@ -18,7 +18,7 @@ public class SourceComponent : MonoBehaviour
     protected SpriteRenderer sr;
     protected GameObject errorHighlight;
 
-    void Start()
+    void Awake()
     {
 
         //allSources.Add(this);
@@ -118,9 +118,11 @@ public class SourceComponent : MonoBehaviour
         //Debug.Log("SetState called at " + pos + " to " + (IsOn() ? "ON" : "OFF"));
         if (sr == null)
         {
+            //Debug.LogWarning("SpriteRenderer is null on " + gameObject.name);
             return;
         }
         sr.color = IsOn() ? Color.white : darkColor;
+        //Debug.Log("SetState: Color change at " + /*pos*/"(" + transform.position.x + ", " + transform.position.y + ")" + " to " + (IsOn() ? "ON" : "OFF"));
         //Debug.Log("Color change at " + pos + " to " + (IsOn() ? "ON" : "OFF"));
         return;
     }

@@ -250,7 +250,6 @@ public class PlaceComponent : MonoBehaviour
         {
             Destroy(existing);
             ComponentScript.GetAllLookUp().Remove((x, y));
-            SaveManager.SaveLookUp();
             gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
         }
@@ -259,7 +258,6 @@ public class PlaceComponent : MonoBehaviour
     {
         GameObject obj = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity, workspace);
         ComponentScript.SetLookUp(obj);
-        SaveManager.SaveLookUp();
         gameManager.compileText.enabled = true;
         gameManager.isCompiled = false;
     }

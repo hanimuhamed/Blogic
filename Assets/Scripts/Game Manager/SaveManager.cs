@@ -9,6 +9,7 @@ public class SaveManager : MonoBehaviour
         public int x;
         public int y;
         public int prefabIndex;
+        public bool state;
     }
 
     private List<GameObject> prefabs; // Assign all possible prefabs in Inspector in order: Input, Wire, Not, Cross, Clock
@@ -47,7 +48,8 @@ public class SaveManager : MonoBehaviour
             {
                 x = kvp.Key.Item1,
                 y = kvp.Key.Item2,
-                prefabIndex = prefabIndex
+                prefabIndex = prefabIndex,
+                state = obj.GetComponent<SourceComponent>()?.IsOn() ?? false
             });
         }
         string json = JsonUtility.ToJson(new Serialization<List<SavedObject>>(saveList));
@@ -66,10 +68,18 @@ public class SaveManager : MonoBehaviour
             if (saved.prefabIndex < 0 || saved.prefabIndex >= prefabs.Count) continue;
             var prefab = prefabs[saved.prefabIndex];
             var obj = Instantiate(prefab, new Vector3(saved.x, saved.y, 0), Quaternion.identity, workspace);
-            var popIn = obj.GetComponent<PopIn>();
+            /*var popIn = obj.GetComponent<PopIn>();
             if (popIn != null)
-                popIn.skipPop = true;
+                popIn.skipPop = true;*/
             ComponentScript.SetLookUp(obj);
+
+            var source = obj.GetComponent<SourceComponent>();
+            if (source != null)
+            {
+                //Debug.Log("Restoring state for SourceComponent at (" + saved.x + ", " + saved.y + ") to " + (saved.state ? "ON" : "OFF"));
+                source.SetState(saved.state);
+                source.isInitialized = true;
+            }
         }
     }
 

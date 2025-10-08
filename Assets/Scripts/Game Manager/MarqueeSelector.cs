@@ -27,7 +27,7 @@ public class MarqueeSelector : MonoBehaviour
     public GameManager gameManager;
     private List<ClipboardEntry> clipboard = new List<ClipboardEntry>();
     private Vector2Int clipboardOrigin;
-    private bool pasteMode = false; 
+    private bool pasteMode = false;
     private List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
     private bool isDuplicateMode = false;
@@ -49,10 +49,22 @@ public class MarqueeSelector : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C)) CopySelection();
             if (Input.GetKeyDown(KeyCode.X)) CutSelection();
             if (Input.GetKeyDown(KeyCode.V)) PasteClipboard();
-            if (Input.GetKeyDown(KeyCode.D)) DuplicateSelection();         
+            if (Input.GetKeyDown(KeyCode.D)) DuplicateSelection();
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                ComponentScript.SetComponentIndex(6); // Set to Marquee
+                SelectAll();
+            }
         }
         if (Input.GetKeyDown(KeyCode.Delete)) DeleteSelection();
         if (Input.GetKeyDown(KeyCode.H)) HideMarquee();
+        if (Input.GetMouseButtonDown(1)) // Right click cancels marquee, paste, drag
+        {
+            HideMarquee();
+            ClearSelection();
+            CancelPasteMode();
+            isDragging = false;
+        }
         if (pasteMode)
             UpdatePasteGhost();
     }
@@ -64,13 +76,23 @@ public class MarqueeSelector : MonoBehaviour
         // Start drag if mouse is over a selected object and left mouse down
         if (!isDragging && Input.GetMouseButtonDown(0))
         {
-            foreach (var obj in selectedObjects)
+            // Calculate selection bounding box
+            if (selectedObjects.Count > 0)
             {
-                if (obj == null) continue;
-                Vector3 objPos = obj.transform.position;
-                if (Vector2.Distance(new Vector2(objPos.x, objPos.y), new Vector2(mouseWorld.x, mouseWorld.y)) < 0.5f)
+                float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+                foreach (var obj in selectedObjects)
                 {
-                    // Begin drag
+                    Vector3 pos = obj.transform.position;
+                    if (pos.x < minX) minX = pos.x;
+                    if (pos.x > maxX) maxX = pos.x;
+                    if (pos.y < minY) minY = pos.y;
+                    if (pos.y > maxY) maxY = pos.y;
+                }
+                Vector3 mouse = mouseWorld;
+                // Check if mouse is inside the bounding box
+                if (mouse.x >= minX && mouse.x <= maxX && mouse.y >= minY && mouse.y <= maxY)
+                {
+                    // Begin drag (rest of your drag logic)
                     isDragging = true;
                     dragStartMouseWorld = mouseWorld;
                     dragOffsets.Clear();
@@ -151,7 +173,6 @@ public class MarqueeSelector : MonoBehaviour
                 }
                 ComponentScript.GetAllLookUp()[key] = sel;
             }
-            SaveManager.SaveLookUp();
             gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
             return;
@@ -307,6 +328,8 @@ public class MarqueeSelector : MonoBehaviour
             Destroy(obj);
         }
         selectedObjects.Clear();
+        gameManager.compileText.enabled = true;
+        gameManager.isCompiled = false;
     }
     public void DuplicateSelection()
     {
@@ -399,7 +422,6 @@ public class MarqueeSelector : MonoBehaviour
                 pasteMode = false;
                 ClearGhostGroup();
             }
-            SaveManager.SaveLookUp();
             gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
         }
@@ -452,5 +474,11 @@ public class MarqueeSelector : MonoBehaviour
                 return i;
         }
         return -1;
+    }
+    private void SelectAll()
+    {
+        ClearSelection();
+        SelectInRect(new Vector3(-TileSpawner.width, -TileSpawner.height, 0), new Vector3(TileSpawner.width, TileSpawner.height, 0));
+        //Debug.Log("Selected all: " + selectedObjects.Count + " objects.");
     }
 }

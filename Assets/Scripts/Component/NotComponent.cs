@@ -5,7 +5,7 @@ using System.Linq;
 public class NotComponent : SourceComponent
 {
 
-    public void Start()
+    public void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
