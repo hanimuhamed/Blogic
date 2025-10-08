@@ -29,6 +29,7 @@ public class PlaceComponent : MonoBehaviour
     private int ghostUpdateFrame = 0;
     private Vector3 ghostPos;
     private bool isErasing;
+    private bool isEraser;
     public MarqueeSelector marqueeSelector;
 
     void Awake()
@@ -59,7 +60,7 @@ public class PlaceComponent : MonoBehaviour
         mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         lastMousePos = Input.mousePosition;
         x = Mathf.RoundToInt(mouseWorldPos.x);
-        y = Mathf.RoundToInt(mouseWorldPos.y);      
+        y = Mathf.RoundToInt(mouseWorldPos.y);
         if (!gameManager.IsPaused())
         {
             if (Input.GetMouseButtonDown(0))
@@ -85,6 +86,7 @@ public class PlaceComponent : MonoBehaviour
             index = ComponentScript.componentIndex;
             lastIndex = index;
         }
+        
         if (index == 6) // Marquee mode
         {
             if (pooledGhostObj != null)
@@ -110,7 +112,9 @@ public class PlaceComponent : MonoBehaviour
             return;
         }
         ghostPos = new Vector3(x, y, 0);
-        isErasing = (ComponentScript.componentIndex == 5) || Input.GetMouseButton(1);
+        isEraser = ComponentScript.componentIndex == 5;   
+        isErasing = isEraser && Input.GetMouseButton(0) || Input.GetMouseButton(1);
+        
         // Return if pointer is over UI
 
 
@@ -122,7 +126,7 @@ public class PlaceComponent : MonoBehaviour
             {
                 DestroyAtMouse(x, y);
             }
-            
+
         }
         else
         {
@@ -132,17 +136,18 @@ public class PlaceComponent : MonoBehaviour
                 PlaceAtMouse(x, y, true); // allow replace
             }
         }
+        
         if (Input.GetMouseButton(1))
         {
             DestroyAtMouse(x, y);
         }
 
-        
+
 
         ghostUpdateFrame++;
-        if (ghostUpdateFrame % 2 == 0)
+        if (ghostUpdateFrame % 4 == 0)
         {
-            
+
             if (pooledGhostObj == null || lastGhostPos != ghostPos || lastGhostIndex != index || lastGhostErasing != isErasing)
             {
                 // Only then update ghost sprite
@@ -158,11 +163,11 @@ public class PlaceComponent : MonoBehaviour
     {
         Vector3 ghostPos = new Vector3(x, y, 0);
         bool isEraser = index == 5;
-        bool isErasing = Input.GetMouseButton(0) && isEraser || Input.GetMouseButton(1) && Input.GetMouseButton(0);
+        bool isErasing = Input.GetMouseButton(0) && isEraser || Input.GetMouseButton(1);
         Sprite spriteToShow = null;
         float alpha = 0.05f;
 
-        if (isEraser || (Input.GetMouseButton(1) && Input.GetMouseButton(0)))
+        if (isEraser || Input.GetMouseButton(1))
         {
             spriteToShow = eraserSprite;
             if (isErasing) alpha = 0.5f;
