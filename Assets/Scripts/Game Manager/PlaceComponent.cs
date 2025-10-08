@@ -59,18 +59,18 @@ public class PlaceComponent : MonoBehaviour
         mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
         lastMousePos = Input.mousePosition;
         x = Mathf.RoundToInt(mouseWorldPos.x);
-        y = Mathf.RoundToInt(mouseWorldPos.y);
-        if (Input.GetMouseButtonDown(1))
-        {
-            InputComponent input = ComponentScript.GetLookUp(x, y)?.GetComponent<InputComponent>();
-            if (input != null)
-            {
-                input.GetComponent<PopIn>().AnimatePop();
-                input.Toggle();   
-            }
-        }
+        y = Mathf.RoundToInt(mouseWorldPos.y);      
         if (!gameManager.IsPaused())
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                InputComponent input = ComponentScript.GetLookUp(x, y)?.GetComponent<InputComponent>();
+                if (input != null)
+                {
+                    input.GetComponent<PopIn>().AnimatePop();
+                    input.Toggle();
+                }
+            }
             if (pooledGhostObj != null)
             {
                 pooledGhostObj.SetActive(false);
@@ -132,7 +132,7 @@ public class PlaceComponent : MonoBehaviour
                 PlaceAtMouse(x, y, true); // allow replace
             }
         }
-        if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1))
         {
             DestroyAtMouse(x, y);
         }

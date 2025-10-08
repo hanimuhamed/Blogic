@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     //public static bool isSimulationRunning = false;
     public float clockTime = 0.25f;
     public TextMeshProUGUI compileText;
+    public TextMeshProUGUI simText;
     public bool isCompiled = true;
     public static bool hasCircularDependency = false;
     public static float simTime = 0.25f;
@@ -36,7 +37,15 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
         if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
-        if (!isPaused) ClockComponent.GlobalClockUpdate(simTime);
+        if (!isPaused)
+        {
+            ClockComponent.GlobalClockUpdate(simTime);
+            simText.text = "Simulation Mode";
+        }
+        else
+        {
+            simText.text = "Edit Mode";
+        }
         if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(RunSimulation());
     }
 
@@ -104,13 +113,19 @@ public class GameManager : MonoBehaviour
                 Mathf.RoundToInt(source.transform.position.x),
                 Mathf.RoundToInt(source.transform.position.y)
             );
+            Vector2Int originalPos = new Vector2Int(pos.x, pos.y);
             if (source is NotComponent)
             {
+                while (ComponentScript.GetLookUp(pos.x - 1, pos.y)?.GetComponent<CrossComponent>() != null)
+                {
+                    pos.x -= 1;
+                }
                 if (ComponentScript.GetLookUp(pos.x - 1, pos.y)?.GetComponent<SourceComponent>() != null)
                 {
                     source.inputSource = ComponentScript.GetLookUp(pos.x - 1, pos.y).GetComponent<SourceComponent>();
-                }     
+                }
             }
+            pos = new Vector2Int(originalPos.x, originalPos.y);
             while (ComponentScript.GetLookUp(pos.x + 1, pos.y)?.GetComponent<CrossComponent>() != null)
             {
                 pos.x += 1;

@@ -32,7 +32,7 @@ public class ComponentScript : MonoBehaviour
     public static void SetComponentIndex(int index)
     {
         componentIndex = index;
-        TileScript.componentChanged = true;
+        //TileScript.componentChanged = true;
     }
 
     void Update()
