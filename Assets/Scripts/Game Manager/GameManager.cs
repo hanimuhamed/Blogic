@@ -14,28 +14,31 @@ public class GameManager : MonoBehaviour
     public bool isCompiled = true;
     public static bool hasCircularDependency = false;
     public static float simTime = 0.25f;
-    public TMP_InputField refreshRateInput;
+    public TMP_InputField refreshRateField;
     public Button pauseButton;
     public Sprite pauseSprite;
     public Sprite playSprite;
     private static bool isPaused = true;
+    public GameObject infoPanel;
 
     void Awake()
     {
         //QualitySettings.vSyncCount = 0; 
         //Application.targetFrameRate = 60;
+        infoPanel.SetActive(false);
     }
     void Start()
     {
         compileText.color = Color.white;
-        refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
+        refreshRateField.onEndEdit.AddListener(SetRefreshRate);
         compileText.text = "Press Enter to Compile.";
         StartCoroutine(Compile());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+        if (Input.GetKeyDown(KeyCode.Escape)) infoPanel.SetActive(false);
+        if (Input.GetKeyDown(KeyCode.Tab)) ToggleInfoPanel();
         if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
         if (!isPaused)
         {
@@ -192,7 +195,7 @@ public class GameManager : MonoBehaviour
             simTime = 1 / clamped;
 
             // Update the InputField text in case the user typed a value out of bounds
-            refreshRateInput.text = clamped.ToString();
+            refreshRateField.text = clamped.ToString();
 
             //Debug.Log("Simulation refresh rate set to " + clamped + " Hz (" + simTime + " seconds per update).");
         }
@@ -200,7 +203,7 @@ public class GameManager : MonoBehaviour
         {
             //Debug.LogWarning("Invalid refresh rate: " + rate);
             // Optionally reset to the previous valid value
-            refreshRateInput.text = (1 / simTime).ToString();
+            refreshRateField.text = (1 / simTime).ToString();
         }
     }
     public void TogglePause()
@@ -251,4 +254,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ToggleInfoPanel()
+    {
+        infoPanel.SetActive(!infoPanel.activeSelf);
+    }
+    public bool IsInfoPanelActive()
+    {
+        return infoPanel.activeSelf;
+    }
 }

@@ -13,6 +13,7 @@ public class MouseNavigation : MonoBehaviour
 
     private Vector3 lastMousePosition;
     private Camera mainCam;
+    public GameManager gameManager;
 
     void Awake()
     {
@@ -23,10 +24,7 @@ public class MouseNavigation : MonoBehaviour
 
     void Update()
     {
-        /*if (!Input.GetKey(KeyCode.LeftShift))
-        {
-            return;
-        }*/
+        if (gameManager.IsInfoPanelActive()) return;
         Camera cam = mainCam;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
