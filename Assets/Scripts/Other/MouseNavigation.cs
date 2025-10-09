@@ -4,7 +4,7 @@ public class MouseNavigation : MonoBehaviour
 {
     public float zoomSpeed = 5f;
     public float minZoom = 2f;
-    public float maxZoom = 80f;
+    private float maxZoom;
 
     private float minX;
     private float maxX;
@@ -19,9 +19,9 @@ public class MouseNavigation : MonoBehaviour
         mainCam = Camera.main;
         // Cache boundaries once
         minX = -TileSpawner.width;
-        maxX = TileSpawner.width;
+        maxX = TileSpawner.width - 1;
         minY = -TileSpawner.height;
-        maxY = TileSpawner.height;
+        maxY = TileSpawner.height - 1;
     }
 
     void Update()
@@ -36,6 +36,7 @@ public class MouseNavigation : MonoBehaviour
         {
             Vector3 mouseWorldBefore = cam.ScreenToWorldPoint(Input.mousePosition);
             float dynamicZoomSpeed = cam.orthographic ? zoomSpeed * cam.orthographicSize * 0.1f : zoomSpeed * cam.fieldOfView * 0.1f;
+            maxZoom = TileSpawner.width; // Set maxZoom based on workspace size
             if (cam.orthographic)
                 cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * dynamicZoomSpeed, minZoom, maxZoom);
             else

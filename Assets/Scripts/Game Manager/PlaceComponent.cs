@@ -15,8 +15,6 @@ public class PlaceComponent : MonoBehaviour
     private Vector3 lastGhostPos;
     private int lastGhostIndex = -1;
     private bool lastGhostErasing = false;
-    private int width;
-    private int height;
     private int x;
     private int y;
     private Vector3 mouseWorldPos;
@@ -50,8 +48,6 @@ public class PlaceComponent : MonoBehaviour
         }
         mainCam = Camera.main;
         lastGhostPos = Vector3.positiveInfinity;
-        width = TileSpawner.width;
-        height = TileSpawner.height;
         gameManager = gameObject.GetComponent<GameManager>();
     }
 
@@ -103,7 +99,7 @@ public class PlaceComponent : MonoBehaviour
             marqueeSelector.CancelPasteMode();
         }
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject() ||
-        x < -width || x > width || y < -height || y > height)
+        x < -TileSpawner.width || x >= TileSpawner.width || y < -TileSpawner.height || y >= TileSpawner.height)
         {
             if (pooledGhostObj != null)
             {

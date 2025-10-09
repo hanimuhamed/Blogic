@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class ComponentScript : MonoBehaviour
 {
-    public static int componentIndex = 6; // Default to Marquee
+    public static int componentIndex = 1; // Default to Wire
     private static Dictionary<(int, int), GameObject> LookUp = new Dictionary<(int, int), GameObject>();
     public static readonly string[] PrefabNames = { "Input", "Wire", "Not", "Cross", "Clock", "Eraser", "Marquee" };
     public static GameObject GetLookUp(int x, int y)

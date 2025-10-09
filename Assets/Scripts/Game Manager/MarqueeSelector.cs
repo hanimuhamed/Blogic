@@ -136,10 +136,10 @@ public class MarqueeSelector : MonoBehaviour
 
             int clampedX = Mathf.Clamp(mouseX,
                 -TileSpawner.width - minOffsetX,
-                TileSpawner.width - maxOffsetX);
+                TileSpawner.width - 1 - maxOffsetX);
             int clampedY = Mathf.Clamp(mouseY,
                 -TileSpawner.height - minOffsetY,
-                TileSpawner.height - maxOffsetY);
+                TileSpawner.height - 1 - maxOffsetY);
 
             Vector3 clampedMouseWorld = new Vector3(clampedX, clampedY, 0);
 
@@ -397,7 +397,7 @@ public class MarqueeSelector : MonoBehaviour
         {
             int x = mx + clipboard[i].relativePos.x;
             int y = my + clipboard[i].relativePos.y;
-            if (x < -TileSpawner.width || x > TileSpawner.width || y < -TileSpawner.height || y > TileSpawner.height)
+            if (x < -TileSpawner.width || x >= TileSpawner.width || y < -TileSpawner.height || y >= TileSpawner.height)
             {
                 canPaste = false;
                 break;
@@ -478,7 +478,7 @@ public class MarqueeSelector : MonoBehaviour
     private void SelectAll()
     {
         ClearSelection();
-        SelectInRect(new Vector3(-TileSpawner.width, -TileSpawner.height, 0), new Vector3(TileSpawner.width, TileSpawner.height, 0));
+        SelectInRect(new Vector3(-TileSpawner.width, -TileSpawner.height, 0), new Vector3(TileSpawner.width - 1, TileSpawner.height - 1, 0));
         //Debug.Log("Selected all: " + selectedObjects.Count + " objects.");
     }
 }

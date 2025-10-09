@@ -579,8 +579,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19addd6e139474745a0b4a5f38570cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: -2253911629886400664, guid: 69dee7f4871a8ee40acf8999b611642e, type: 3}
-  grid: {fileID: -2253911629886400664, guid: c4ed2e95bb4ad8f43b020f06825eeea7, type: 3}
+  tile: {fileID: -2253911629886400664, guid: b0292276090da9648934a31f81c1f677, type: 3}
+  tileSize: 8
   tileSpace: {fileID: 773257145}
 --- !u!114 &512963077
 MonoBehaviour:
@@ -785,7 +785,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoomSpeed: 20
   minZoom: 2
-  maxZoom: 160
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
