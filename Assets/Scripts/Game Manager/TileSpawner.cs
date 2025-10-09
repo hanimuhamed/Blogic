@@ -10,7 +10,7 @@ public class TileSpawner : MonoBehaviour
     public static int height = 64;
     private int maxWidth = 512;
     private int maxHeight = 512;
-    private bool sizeIsChanged = false;
+    //private bool sizeIsChanged = false;
     public GameObject SpawnTile(int x, int y)
     {
         return Instantiate(tile, new Vector3(x, y, 1), Quaternion.identity, tileSpace);
@@ -46,7 +46,7 @@ public class TileSpawner : MonoBehaviour
         SpawnGrid(width, height);
     }
 
-    void Update()
+    /*void Update()
     {
         int oldHeight = height;
         int oldWidth = width;
@@ -85,8 +85,40 @@ public class TileSpawner : MonoBehaviour
             SpawnGrid(width, height);
             PlayerPrefs.SetInt("TileSpawnerWidth", width);
             PlayerPrefs.SetInt("TileSpawnerHeight", height);
-            PlayerPrefs.Save();           
+            PlayerPrefs.Save();
         }
+    }*/
+    public void IncreaseGridSize()
+    {
+        if (height < maxHeight) height *= 2;
+        if (width < maxWidth) width *= 2;
+        if (GameManager.HasOutOfBoundsComponents())
+        {
+            height /= 2;
+            width /= 2;
+            return;
+        }
+        SetGridSizeChange();
     }
-
+    public void DecreaseGridSize()
+    {
+        if (height > tileSize) height /= 2;
+        if (width > tileSize) width /= 2;
+        if (GameManager.HasOutOfBoundsComponents())
+        {
+            height *= 2;
+            width *= 2;
+            return;
+        }
+        SetGridSizeChange();
+    }
+    private void SetGridSizeChange()
+    {
+        ClearGrid();
+        GameManager.DestroyOutOfBoundsComponents();
+        SpawnGrid(width, height);
+        PlayerPrefs.SetInt("TileSpawnerWidth", width);
+        PlayerPrefs.SetInt("TileSpawnerHeight", height);
+        PlayerPrefs.Save();
+    }
 }

@@ -17,6 +17,7 @@ public class MouseNavigation : MonoBehaviour
     void Awake()
     {
         mainCam = Camera.main;
+        mainCam.orthographicSize = Mathf.Max(TileSpawner.width, TileSpawner.height) * 1.1f;
         // Cache boundaries once
     }
 
