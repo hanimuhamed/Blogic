@@ -6,17 +6,16 @@ public class TileSpawner : MonoBehaviour
     public int tileSize = 8;
     //public GameObject grid;
     public Transform tileSpace;
-    public static int width = 128;
-    public static int height = 128;
+    public static int width = 64;
+    public static int height = 64;
+    private int maxWidth = 512;
+    private int maxHeight = 512;
+    private bool sizeIsChanged = false;
     public GameObject SpawnTile(int x, int y)
     {
         return Instantiate(tile, new Vector3(x, y, 1), Quaternion.identity, tileSpace);
     }
-    /*public GameObject SpawnGrid(float x, float y)
-    {
-        return Instantiate(grid, new Vector3(x, y, 2), Quaternion.identity, tileSpace);
-    }*/
-    void Start()
+    public void SpawnGrid(int width, int height)
     {
         for (int x = -width; x < width; x += tileSize)
         {
@@ -25,6 +24,69 @@ public class TileSpawner : MonoBehaviour
                 GameObject newTile = SpawnTile(x, y);
             }
         }
-        //SpawnGrid(0f, 0f);
     }
+    public void ClearGrid()
+    {
+        foreach (Transform child in tileSpace)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    void Awake()
+    {
+        // Load width and height if they exist
+        if (PlayerPrefs.HasKey("TileSpawnerWidth"))
+            width = PlayerPrefs.GetInt("TileSpawnerWidth");
+        if (PlayerPrefs.HasKey("TileSpawnerHeight"))
+            height = PlayerPrefs.GetInt("TileSpawnerHeight");
+    }
+    void Start()
+    {
+        GameManager.DestroyOutOfBoundsComponents();
+        SpawnGrid(width, height);
+    }
+
+    void Update()
+    {
+        int oldHeight = height;
+        int oldWidth = width;
+        if (!GameManager.IsPaused()) return;
+        if (Input.GetKeyDown(KeyCode.UpArrow) && height < maxHeight)
+        {
+            height *= 2;
+            sizeIsChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && height > tileSize)
+        {
+            height /= 2;
+            sizeIsChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && width < maxWidth)
+        {
+            width *= 2;
+            sizeIsChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) && width > tileSize)
+        {
+            width /= 2;
+            sizeIsChanged = true;
+        }
+        if (sizeIsChanged)
+        {
+            sizeIsChanged = false;
+            if (GameManager.HasOutOfBoundsComponents())
+            {
+                height = oldHeight;
+                width = oldWidth;
+                return;
+            }
+            ClearGrid();
+            GameManager.DestroyOutOfBoundsComponents();
+            SpawnGrid(width, height);
+            PlayerPrefs.SetInt("TileSpawnerWidth", width);
+            PlayerPrefs.SetInt("TileSpawnerHeight", height);
+            PlayerPrefs.Save();           
+        }
+    }
+
 }

@@ -11,6 +11,7 @@ public class NotComponent : SourceComponent
         sr.color = darkColor;
         errorHighlight = gameObject.transform.GetChild(0).gameObject;
         errorHighlight.SetActive(false);
+        allSources.Add(this);
         /*pos = new Vector2Int(
             Mathf.RoundToInt(transform.position.x),
             Mathf.RoundToInt(transform.position.y)

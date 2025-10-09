@@ -14,6 +14,15 @@ public class UndoRedoManager : MonoBehaviour
     private GameManager gameManager;
     private float undoRedoCooldown = 0.25f; // seconds
     private float undoRedoTimer = 0f;
+    public TileSpawner spawner; // Assign in Inspector or find at runtime
+
+    [System.Serializable]
+    private class UndoRedoState
+    {
+        public int width;
+        public int height;
+        public List<SaveManager.SavedObject> objects;
+    }
 
     void Start()
     {
@@ -29,7 +38,15 @@ public class UndoRedoManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(0) ||
+            Input.GetMouseButtonUp(1) ||
+            Input.GetKeyUp(KeyCode.Delete) ||
+            Input.GetKeyUp(KeyCode.X) ||
+            
+            Input.GetKeyUp(KeyCode.UpArrow) ||
+            Input.GetKeyUp(KeyCode.DownArrow) ||
+            Input.GetKeyUp(KeyCode.LeftArrow) ||
+            Input.GetKeyUp(KeyCode.RightArrow))
         {
             string currentState = SerializeLookUp();
             if (currentState != lastState)
@@ -100,23 +117,40 @@ public class UndoRedoManager : MonoBehaviour
                 prefabIndex = prefabIndex
             });
         }
-        return JsonUtility.ToJson(new SaveManager.Serialization<List<SaveManager.SavedObject>>(saveList));
+        var wrapper = new UndoRedoState
+        {
+            width = TileSpawner.width,
+            height = TileSpawner.height,
+            objects = saveList
+        };
+        return JsonUtility.ToJson(wrapper);
     }
 
     // Only update changed objects for fast undo/redo, with pooling
     private void ApplyStateDelta(string json)
     {
-        var lookup = ComponentScript.GetAllLookUp();
-        var saveList = JsonUtility.FromJson<SaveManager.Serialization<List<SaveManager.SavedObject>>>(json).target;
+        var wrapper = JsonUtility.FromJson<UndoRedoState>(json);
+        var saveList = wrapper.objects;
         var prefabs = components.prefabs;
 
-        // Build dictionaries for fast comparison
+        // Restore width and height
+        TileSpawner.width = wrapper.width;
+        TileSpawner.height = wrapper.height;
+
+        // Optionally, respawn the grid if needed:
+        if (spawner != null)
+        {
+            spawner.ClearGrid();
+            spawner.SpawnGrid(TileSpawner.width, TileSpawner.height);
+        }
+
+        // ...rest of your existing code for restoring objects...
+        var lookup = ComponentScript.GetAllLookUp();
         var targetDict = new Dictionary<(int, int), int>();
         foreach (var saved in saveList)
             targetDict[(saved.x, saved.y)] = saved.prefabIndex;
 
         var toRemove = new List<(int, int)>();
-        // Remove or pool objects not in target state or with different prefab
         foreach (var kvp in lookup)
         {
             if (!targetDict.TryGetValue(kvp.Key, out int targetPrefab) || GetPrefabIndex(kvp.Value) != targetPrefab)
@@ -128,7 +162,6 @@ public class UndoRedoManager : MonoBehaviour
         foreach (var key in toRemove)
             lookup.Remove(key);
 
-        // Add missing objects (reuse from pool if possible)
         foreach (var saved in saveList)
         {
             var key = (saved.x, saved.y);

@@ -10,8 +10,6 @@ public class WireCluster : MonoBehaviour
     public List<NotComponent> connectedNots = new List<NotComponent>();
     public List<SourceComponent> inputSources = new List<SourceComponent>();
     private bool isOn = false;
-    public bool isInitialized = false;
-    public bool isVisited = false;
     public void AddWire(WireComponent wire)
     {
         if (!wires.Contains(wire))
@@ -135,14 +133,6 @@ public class WireCluster : MonoBehaviour
     public bool IsOn()
     {
         return isOn == true;
-    }
-    public bool IsInitialized()
-    {
-        return isInitialized;
-    }
-    public bool IsVisited()
-    {
-        return isVisited;
     }
 
 }

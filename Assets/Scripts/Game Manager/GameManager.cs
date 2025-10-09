@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public Button pauseButton;
     public Sprite pauseSprite;
     public Sprite playSprite;
-    private bool isPaused = true;
+    private static bool isPaused = true;
 
     void Awake()
     {
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         compileText.color = Color.white;
         refreshRateInput.onEndEdit.AddListener(SetRefreshRate);
         compileText.text = "Press Enter to Compile.";
-        StartCoroutine(RunSimulation());
+        StartCoroutine(Compile());
         //StartCoroutine(RunSimulation());
     }
     private void Update()
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         {
             simText.text = "Edit Mode";
         }
-        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(RunSimulation());
+        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(Compile());
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S) && isCompiled)
         {
             SaveManager.SaveLookUp();
@@ -62,63 +62,74 @@ public class GameManager : MonoBehaviour
         compileText.enabled = false;
         compileText.text = "Press Enter to Compile.";
     }
-    public IEnumerator RunSimulation()
+    public IEnumerator Compile()
     {
         isCompiled = true;
-        compileText.text = "Compiling";
+        compileText.text = "Compiling...";
         compileText.color = Color.white;
-        yield return null; // Wait a frame to show the compiling text
-        SourceComponent.Refresh();
-        WireComponent.unclusturedWires.Clear();
-        int destroyCount = 0;
+        //Debug.Log("Compilation initiated.");
+        yield return null;
+        ResetComponents();
+        //Debug.Log("Components reset.");
+        yield return null;
+        DestroyWireClusters();
+        //Debug.Log("Old wire clusters destroyed.");
+        yield return null;
+        CreateWireClusters(); // <-- ERROR
+        //Debug.Log("New wire clusters created and connections established.");
+        yield return null;
+        ConnectSourceToSource();
+        //Debug.Log("Sources connected.");
+        yield return null;
+        UpdateStates();
+        //Debug.Log("States updated.");
+        yield return null;
+        if (!isCompiled) yield break;
+        compileText.text = "Press Enter to Compile.";
+        compileText.enabled = false;
+        compileText.color = Color.white;
+        SaveManager.SaveLookUp();
+        yield break;
+    }
+
+    private void ResetComponents()
+    {
+        foreach (var source in SourceComponent.allSources)
+        {
+            if (source == null) continue;
+            //source.isInitialized = false;
+            source.connectedClusters.Clear();
+            source.inputCluster = null;
+            if (!(source is NotComponent)) continue;
+            source.errorHighlight.SetActive(false);
+        }
+        WireComponent.unclusturedWires = new List<WireComponent>(WireComponent.allWires);
+        return;
+    }
+
+    private void DestroyWireClusters()
+    {
         foreach (var cluster in WireCluster.allClusters)
         {
             if (cluster == null) continue;
-            cluster.connectedNots.Clear();
+            //cluster.connectedNots.Clear();
             Destroy(cluster.gameObject);
-            destroyCount++;
-            if (destroyCount % 20 == 0) yield return null; // Yield every 20 destroys           
         }
-        SourceComponent.allSources.Clear();
-        for (int i = -TileSpawner.width; i < TileSpawner.width; i++)
-        {
-            for (int j = -TileSpawner.height; j < TileSpawner.height; j++)
-            {
-                GameObject obj = ComponentScript.GetLookUp(i, j);
-                if (obj == null) continue;
-                else if (obj.GetComponent<WireComponent>() != null)
-                {
-                    WireComponent.unclusturedWires.Add(obj.GetComponent<WireComponent>());
-                }
-            }
-        }
+    }
+    private void CreateWireClusters()
+    {
         while (WireComponent.unclusturedWires.Count > 0)
         {
             var wire = WireComponent.unclusturedWires[0];
+            WireComponent.unclusturedWires.RemoveAt(0);
             if (wire != null)
             {
                 wire.DFSConnect();
             }
         }
-        for (int i = -TileSpawner.width; i < TileSpawner.width; i++)
-        {
-            for (int j = -TileSpawner.height; j < TileSpawner.height; j++)
-            {
-                GameObject obj = ComponentScript.GetLookUp(i, j);
-                if (obj == null) continue;
-                else if (obj.GetComponent<InputComponent>() != null ||
-                        obj.GetComponent<ClockComponent>() != null)
-                {
-                    SourceComponent.allSources.Add(obj.GetComponent<InputComponent>());
-                    SourceComponent.allSources.Add(obj.GetComponent<ClockComponent>());
-                }
-                else if (obj.GetComponent<NotComponent>() != null)
-                {
-                    SourceComponent.allSources.Add(obj.GetComponent<NotComponent>());
-                }
-            }
-        }
-        int srcCount = 0;
+    }
+    private void ConnectSourceToSource()
+    {
         foreach (var source in SourceComponent.allSources)
         {
             if (source == null) continue;
@@ -149,18 +160,16 @@ public class GameManager : MonoBehaviour
             {
                 source.connectedNot = ComponentScript.GetLookUp(pos.x + 1, pos.y).GetComponent<NotComponent>();
             }
-            srcCount++;
-            if (srcCount % 20 == 0) yield return null;
         }
+    }
+    private void UpdateStates()
+    {
         foreach (var cluster in WireCluster.allClusters)
         {
             if (cluster == null) continue;
-            if (cluster.isInitialized) continue;
             var visited = new Dictionary<(int, int), int>();
             SimulationDriver.Instance.EnqueueRoutine(() => cluster.UpdateNext(visited));
             SimulationDriver.Instance.RunAll();
-            srcCount++;
-            if (srcCount % 20 == 0) yield return null; // Yield every 20 clusters
         }
         foreach (var source in SourceComponent.allSources)
         {
@@ -169,21 +178,7 @@ public class GameManager : MonoBehaviour
             var visited = new Dictionary<(int, int), int>();
             SimulationDriver.Instance.EnqueueRoutine(() => source.UpdateNext(visited));
             SimulationDriver.Instance.RunAll();
-            srcCount++;
-            if (srcCount % 20 == 0) yield return null; // Yield every 20 sources
         }
-        if (!isCompiled) yield break;
-        /*if (GameManager.hasCircularDependency) {
-            isCompiled = false;
-            compileText.text = "Circular dependency detected! Fix the circuit and recompile.";
-            hasCircularDependency = false;
-            yield break;
-        }*/
-        compileText.text = "Press Enter to Compile.";
-        compileText.enabled = false;
-        compileText.color = Color.white;
-        SaveManager.SaveLookUp();
-        yield break;
     }
     public void SetRefreshRate(string rate)
     {
@@ -220,9 +215,40 @@ public class GameManager : MonoBehaviour
             pauseButton.image.sprite = pauseSprite;
         }
     }
-    public bool IsPaused()
+    public static bool IsPaused()
     {
         return isPaused;
+    }
+    public static bool HasOutOfBoundsComponents()
+    {
+        foreach (var kvp in ComponentScript.GetAllLookUp())
+        {
+            var obj = kvp.Value;
+            if (obj == null) continue;
+            if (!obj) continue;
+            int x = Mathf.RoundToInt(obj.transform.position.x);
+            int y = Mathf.RoundToInt(obj.transform.position.y);
+            if (x < -TileSpawner.width || x >= TileSpawner.width || y < -TileSpawner.height || y >= TileSpawner.height)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void DestroyOutOfBoundsComponents()
+    {
+        foreach (var kvp in ComponentScript.GetAllLookUp())
+        {
+            var obj = kvp.Value;
+            if (obj == null) continue;
+            if (!obj) continue;
+            int x = Mathf.RoundToInt(obj.transform.position.x);
+            int y = Mathf.RoundToInt(obj.transform.position.y);
+            if (x < -TileSpawner.width || x >= TileSpawner.width || y < -TileSpawner.height || y >= TileSpawner.height)
+            {
+                Object.Destroy(obj);
+            }
+        }
     }
 
 }

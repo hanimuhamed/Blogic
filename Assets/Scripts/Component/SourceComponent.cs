@@ -16,12 +16,12 @@ public class SourceComponent : MonoBehaviour
     public Color darkColor = new Color(0.6f, 0.6f, 0.6f);
     //protected Vector2Int pos;
     protected SpriteRenderer sr;
-    protected GameObject errorHighlight;
+    public GameObject errorHighlight;
 
     void Awake()
     {
 
-        //allSources.Add(this);
+        allSources.Add(this);
         sr = GetComponent<SpriteRenderer>();
         sr.color = darkColor;
         /*pos = new Vector2Int(
@@ -166,24 +166,7 @@ public class SourceComponent : MonoBehaviour
     {
         return isInitialized;
     }
-    public static void Refresh()
-    {
-        foreach (var cluster in WireCluster.allClusters)
-        {
-            if (cluster == null) continue;
-            //cluster.isInitialized = false;
-        }
-        foreach (var source in allSources)
-        {
-            if (source == null) continue;
-            //source.isInitialized = false;
-            source.connectedClusters.Clear();
-            source.inputCluster = null;
-            if (!(source is NotComponent)) continue;
-            source.errorHighlight.SetActive(false);
-        }
-        return;
-    }
+    
 
     /*public void NullifyState()
     {

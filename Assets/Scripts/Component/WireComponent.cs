@@ -4,15 +4,17 @@ using System.Collections.Generic;
 public class WireComponent : MonoBehaviour
 {
     private WireCluster cluster;
+    public static List<WireComponent> allWires = new List<WireComponent>();
     public static List<WireComponent> unclusturedWires = new List<WireComponent>();
     public static Color darkColor = new Color(0.5f, 0.5f, 0.5f);
     //public static Color nullColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     private bool isOn = false;
     public SpriteRenderer sr;
-    void Start()
+    void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
-        //unclusturedWires.Add(this);
+        allWires.Add(this);
+        unclusturedWires.Add(this);
         sr.color = darkColor;
     }
 
