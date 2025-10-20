@@ -18,8 +18,9 @@ public class GameManager : MonoBehaviour
     public Button pauseButton;
     public Sprite pauseSprite;
     public Sprite playSprite;
-    private static bool isPaused = true;
+    private static bool isPaused = false;
     public GameObject infoPanel;
+    private Queue<WireCluster> clustersToDestroy = new Queue<WireCluster>();
 
     void Awake()
     {
@@ -31,29 +32,20 @@ public class GameManager : MonoBehaviour
     {
         compileText.color = Color.white;
         refreshRateField.onEndEdit.AddListener(SetRefreshRate);
-        compileText.text = "Press Enter to Compile.";
-        StartCoroutine(Compile());
-        //StartCoroutine(RunSimulation());
+        compileText.text = null;
+        StartCoroutine(EnterSimulationMode());
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape)) infoPanel.SetActive(false);
         if (Input.GetKeyDown(KeyCode.Tab)) ToggleInfoPanel();
         if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
-        if (!isPaused)
+        //if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(Compile());
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S))
         {
-            ClockComponent.GlobalClockUpdate(simTime);
-            simText.text = "Simulation Mode";
-        }
-        else
-        {
-            simText.text = "Edit Mode";
-        }
-        if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(Compile());
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S) && isCompiled)
-        {
+            if (!isCompiled) StartCoroutine(Compile());
             SaveManager.SaveLookUp();
-            StartCoroutine(DisplaySaveText(1.0f));
+            StartCoroutine(DisplaySaveText(0.5f));
         }
     }
 
@@ -63,11 +55,11 @@ public class GameManager : MonoBehaviour
         compileText.enabled = true;
         yield return new WaitForSeconds(delay);
         compileText.enabled = false;
-        compileText.text = "Press Enter to Compile.";
+        compileText.text = null;
     }
     public IEnumerator Compile()
-    {
-        isCompiled = true;
+    {  
+        compileText.enabled = true;
         compileText.text = "Compiling...";
         compileText.color = Color.white;
         //Debug.Log("Compilation initiated.");
@@ -78,7 +70,7 @@ public class GameManager : MonoBehaviour
         DestroyWireClusters();
         //Debug.Log("Old wire clusters destroyed.");
         yield return null;
-        CreateWireClusters(); // <-- ERROR
+        CreateWireClusters();
         //Debug.Log("New wire clusters created and connections established.");
         yield return null;
         ConnectSourceToSource();
@@ -87,8 +79,14 @@ public class GameManager : MonoBehaviour
         UpdateStates();
         //Debug.Log("States updated.");
         yield return null;
-        if (!isCompiled) yield break;
-        compileText.text = "Press Enter to Compile.";
+        if (hasCircularDependency)
+        {
+            hasCircularDependency = false;
+            yield break;
+        }
+        Debug.Log("Compilation successful.");
+        isCompiled = true;
+        compileText.text = null;
         compileText.enabled = false;
         compileText.color = Color.white;
         SaveManager.SaveLookUp();
@@ -116,7 +114,9 @@ public class GameManager : MonoBehaviour
         {
             if (cluster == null) continue;
             //cluster.connectedNots.Clear();
-            Destroy(cluster.gameObject);
+            //cluster.gameObject.SetActive(false);  
+            Destroy(cluster);  
+            //clustersToDestroy.Enqueue(cluster);
         }
     }
     private void CreateWireClusters()
@@ -211,12 +211,36 @@ public class GameManager : MonoBehaviour
         isPaused = !isPaused;
         if (isPaused)
         {
-            pauseButton.image.sprite = playSprite;
+            StartCoroutine(EnterEditMode());
         }
         else
         {
-            pauseButton.image.sprite = pauseSprite;
+            StartCoroutine(EnterSimulationMode());
         }
+    }
+
+    public IEnumerator EnterEditMode()
+    {
+        pauseButton.image.sprite = playSprite;
+        simText.text = "Edit Mode";
+        yield return null;
+    }
+    public IEnumerator EnterSimulationMode()
+    {
+        if (!isCompiled)
+        {
+            yield return StartCoroutine(Compile());
+            if (!isCompiled)
+            {
+                Debug.Log("Compilation failed. Staying in Edit Mode.");
+                TogglePause();
+                yield break;
+            }   
+        }
+        pauseButton.image.sprite = pauseSprite;
+        ClockComponent.GlobalClockUpdate(simTime);
+        simText.text = "Simulation Mode";
+        yield return null;
     }
     public static bool IsPaused()
     {

@@ -44,7 +44,6 @@ public class SimulationDriver : MonoBehaviour
             gameManager.compileText.text = "Circular dependency detected!";
             gameManager.compileText.enabled = true;
             gameManager.compileText.color = Color.yellow;
-            GameManager.hasCircularDependency = false;
         }
         return;
     }

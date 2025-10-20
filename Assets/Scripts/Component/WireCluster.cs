@@ -134,5 +134,15 @@ public class WireCluster : MonoBehaviour
     {
         return isOn == true;
     }
+    public void Uncluster()
+    {
+        foreach (var wire in wires)
+        {
+            if (wire == null) continue;
+            WireComponent.unclusturedWires.Add(wire);
+        }
+        wires.Clear();
+        Destroy(this);
+    }
 
 }

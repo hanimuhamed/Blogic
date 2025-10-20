@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -872,8 +872,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1258974046}
   m_HandleRect: {fileID: 1258974045}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.3655906
+  m_Value: 0.9999999
+  m_Size: 0.35404077
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1186,14 +1186,14 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 126816790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 48, y: -57}
-  m_SizeDelta: {x: 33.04, y: 63}
+  m_AnchoredPosition: {x: 24, y: -28.5}
+  m_SizeDelta: {x: 16.52, y: 31.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &648576753
 MonoBehaviour:
@@ -1324,7 +1324,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -720}
-  m_SizeDelta: {x: 149.04004, y: 100}
+  m_SizeDelta: {x: 149.04004, y: 45.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &672777908
 MonoBehaviour:
@@ -1686,8 +1686,8 @@ RectTransform:
   m_GameObject: {fileID: 928189477}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1376265811}
   m_Father: {fileID: 126816790}
@@ -2755,7 +2755,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1800, y: 1200}
+  m_SizeDelta: {x: 1600, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1376265812
 MonoBehaviour:
@@ -3025,14 +3025,14 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 126816790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 45.69995}
-  m_SizeDelta: {x: 340.7, y: 50}
+  m_AnchoredPosition: {x: 0, y: 25}
+  m_SizeDelta: {x: 291.4, y: 33.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1463822818
 MonoBehaviour:
@@ -3081,8 +3081,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3158,8 +3158,8 @@ RectTransform:
   m_GameObject: {fileID: 1482173983}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2130932086}
   - {fileID: 448484236}
@@ -3172,7 +3172,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 10, y: 0}
+  m_AnchoredPosition: {x: -262.7, y: -362.6}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1497502794
@@ -3210,7 +3210,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000041132473}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0.00024414062}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1497502796
@@ -3516,7 +3516,7 @@ RectTransform:
   m_GameObject: {fileID: 1548366172}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
+  m_LocalScale: {x: 0.875, y: 0.875, z: 0.875}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1532963079}
@@ -3526,7 +3526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -102.899994, y: 49.30005}
+  m_AnchoredPosition: {x: -50, y: 25}
   m_SizeDelta: {x: 87.9, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1548366174
@@ -3601,8 +3601,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -47}
-  m_SizeDelta: {x: 640.2, y: 50}
+  m_AnchoredPosition: {x: 0, y: -23.5}
+  m_SizeDelta: {x: 143.1, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1692487286
 MonoBehaviour:
@@ -3624,7 +3624,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: Simulation Mode
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3651,8 +3651,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3731,7 +3731,7 @@ RectTransform:
   m_GameObject: {fileID: 1776349621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
+  m_LocalScale: {x: 0.875, y: 0.875, z: 0.875}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1545171037}
@@ -3739,7 +3739,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -291.6, y: 49.30005}
+  m_AnchoredPosition: {x: -150, y: 25}
   m_SizeDelta: {x: 107.9, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1776349623
@@ -4060,8 +4060,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -57, y: -57}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: -28.5, y: -28.5}
+  m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1959126526
 MonoBehaviour:
@@ -4325,7 +4325,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 882.96405, y: -1641.18}
+  m_AnchoredPosition: {x: 882.96405, y: -1271.04}
   m_SizeDelta: {x: 1669.9281, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2001742229
@@ -4360,15 +4360,15 @@ MonoBehaviour:
     or 6\n\nMARQUEE (SELECTION TOOL)\n- Select and move components, perform additional
     operations\n- Keys: M or 7\n\nMARQUEE OPERATIONS\n- Cut: Ctrl + X\n- Copy: Ctrl
     + C\n- Paste: Ctrl + V\n- Duplicate: Ctrl + D\n- Select All: Ctrl + A\n- Delete:
-    Del\n\nVIEW CONTROLS\r\n- Middle Mouse Button to pan\r\n- Middle Mouse Scroll
-    to zoom in and out\n\nUNDO / REDO\n- Undo: Ctrl + Z\n- Redo: Ctrl + Y or Ctrl
-    + Shift + Z\n\nCOMPILE\n- Press Space to compile after any change (except input
-    toggles)\n\nSAVE\n- Press Ctrl + S to save\n\nGRID AND CLOCK SETTINGS\n- Bottom
-    Right UI:  \n  - Plus and Minus buttons increase or decrease grid size\n  - The
-    input field sets clock frequency in Hz\n\nCIRCULAR DEPENDENCY\n- Occurs when
-    components depend on each other in a loop\n- Highlighted by a yellow box\n- This
-    can sometimes give false positives\r\n- If it does don\u2019t panic, just try
-    recompiling\r\n- Fix any actual loops and recompile\n\nNOTES ON SIMULATION\n-
+    Del\n- Deselect: RMB\n\nVIEW CONTROLS\r\n- Middle Mouse Button to pan\r\n- Middle
+    Mouse Scroll to zoom in and out\n\nUNDO / REDO\n- Undo: Ctrl + Z\n- Redo: Ctrl
+    + Y or Ctrl + Shift + Z\n\nSAVE\n- Press Ctrl + S to compile and save\n\nGRID
+    AND CLOCK SETTINGS\n- Bottom Right UI:  \n  - Plus and Minus buttons increase
+    or decrease grid size\n  - Keep your components closer to the center to decrease
+    grid size\n  - The input field sets clock frequency in Hz\n\nCIRCULAR DEPENDENCY\n-
+    Occurs when components depend on each other in a loop\n- Highlighted by a yellow
+    box\n- This can sometimes give false positives\r\n- If it does don\u2019t panic,
+    just try recompiling\r\n- Fix any actual loops and recompile\n\nNOTES ON SIMULATION\n-
     This is a zero-tick simulator, only level-triggered clocks are possible\n- Edge-triggered
     clocks (e.g., JK flip-flops) will cause circular dependency\n- Use master-slave
     flip-flops instead\n"
@@ -4398,8 +4398,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

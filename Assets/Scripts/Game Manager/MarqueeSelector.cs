@@ -44,6 +44,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     void Update()
     {
+        if (!GameManager.IsPaused()) return;
         if (Input.GetKey(KeyCode.LeftControl))
         {
             if (Input.GetKeyDown(KeyCode.C)) CopySelection();
@@ -173,7 +174,7 @@ public class MarqueeSelector : MonoBehaviour
                 }
                 ComponentScript.GetAllLookUp()[key] = sel;
             }
-            gameManager.compileText.enabled = true;
+            //gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
             return;
         }
@@ -328,7 +329,7 @@ public class MarqueeSelector : MonoBehaviour
             Destroy(obj);
         }
         selectedObjects.Clear();
-        gameManager.compileText.enabled = true;
+        //gameManager.compileText.enabled = true;
         gameManager.isCompiled = false;
     }
     public void DuplicateSelection()
@@ -422,7 +423,7 @@ public class MarqueeSelector : MonoBehaviour
                 pasteMode = false;
                 ClearGhostGroup();
             }
-            gameManager.compileText.enabled = true;
+            //gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
         }
         // Cancel paste on right click

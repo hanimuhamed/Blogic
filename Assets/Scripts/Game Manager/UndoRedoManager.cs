@@ -83,7 +83,7 @@ public class UndoRedoManager : MonoBehaviour
             string prevState = undoStack.Peek();
             ApplyStateDelta(prevState);
             lastState = prevState;
-            gameManager.compileText.enabled = true;
+            //gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
         }
     }
@@ -95,7 +95,7 @@ public class UndoRedoManager : MonoBehaviour
             undoStack.Push(redoState);
             ApplyStateDelta(redoState);
             lastState = redoState;
-            gameManager.compileText.enabled = true;
+            //gameManager.compileText.enabled = true;
             gameManager.isCompiled = false;
         }
     }

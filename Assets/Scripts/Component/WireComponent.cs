@@ -22,6 +22,10 @@ public class WireComponent : MonoBehaviour
     {
         cluster = c;
     }
+    public WireCluster GetCluster()
+    {
+        return cluster;
+    }
 
     public void DFSConnect()
     {
