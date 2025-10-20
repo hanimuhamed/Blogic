@@ -18,8 +18,10 @@ public class GameManager : MonoBehaviour
     public Button pauseButton;
     public Sprite pauseSprite;
     public Sprite playSprite;
-    private static bool isPaused = false;
+    private static bool isEditMode = false;
     public GameObject infoPanel;
+    private bool isPaused = false;
+    public GameObject pausePanel;
     private Queue<WireCluster> clustersToDestroy = new Queue<WireCluster>();
 
     void Awake()
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
         //QualitySettings.vSyncCount = 0; 
         //Application.targetFrameRate = 60;
         infoPanel.SetActive(false);
+        pausePanel.SetActive(false);
     }
     void Start()
     {
@@ -37,15 +40,28 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) infoPanel.SetActive(false);
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (infoPanel.activeSelf)
+            {
+                ToggleInfoPanel();
+            }
+            else
+            {
+                TogglePause();
+            }
+        }
+        if (isPaused) return;
         if (Input.GetKeyDown(KeyCode.Tab)) ToggleInfoPanel();
-        if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
+        if (Input.GetKeyDown(KeyCode.Space)) ToggleMode();
+        if (!isEditMode)
+        {
+            ClockComponent.GlobalClockUpdate(simTime);
+        }
         //if (Input.GetKeyDown(KeyCode.Return) && !isCompiled) StartCoroutine(Compile());
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.S))
         {
-            if (!isCompiled) StartCoroutine(Compile());
-            SaveManager.SaveLookUp();
-            StartCoroutine(DisplaySaveText(0.5f));
+            Save();
         }
     }
 
@@ -206,10 +222,10 @@ public class GameManager : MonoBehaviour
             refreshRateField.text = (1 / simTime).ToString();
         }
     }
-    public void TogglePause()
+    public void ToggleMode()
     {
-        isPaused = !isPaused;
-        if (isPaused)
+        isEditMode = !isEditMode;
+        if (isEditMode)
         {
             StartCoroutine(EnterEditMode());
         }
@@ -233,18 +249,17 @@ public class GameManager : MonoBehaviour
             if (!isCompiled)
             {
                 Debug.Log("Compilation failed. Staying in Edit Mode.");
-                TogglePause();
+                ToggleMode();
                 yield break;
             }   
         }
         pauseButton.image.sprite = pauseSprite;
-        ClockComponent.GlobalClockUpdate(simTime);
         simText.text = "Simulation Mode";
         yield return null;
     }
-    public static bool IsPaused()
+    public static bool IsEditMode()
     {
-        return isPaused;
+        return isEditMode;
     }
     public static bool HasOutOfBoundsComponents()
     {
@@ -285,5 +300,36 @@ public class GameManager : MonoBehaviour
     public bool IsInfoPanelActive()
     {
         return infoPanel.activeSelf;
+    }
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0 : 1;
+        pausePanel.SetActive(isPaused);
+    }
+    public void Resume()
+    {
+        isPaused = false;
+        Time.timeScale = 1;
+        pausePanel.SetActive(false);
+    }
+    public void Quit()
+    {
+        Application.Quit();
+    }
+    public void Save()
+    {
+        if (isPaused) Resume();
+        if (!isCompiled) StartCoroutine(Compile());
+        SaveManager.SaveLookUp();
+        StartCoroutine(DisplaySaveText(0.5f));
+    }
+    public void OpenInfoPanel()
+    {
+        if (isPaused) Resume();
+        if (!infoPanel.activeSelf)
+        {
+            ToggleInfoPanel();
+        }
     }
 }

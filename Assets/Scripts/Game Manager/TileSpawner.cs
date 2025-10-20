@@ -50,7 +50,7 @@ public class TileSpawner : MonoBehaviour
     {
         int oldHeight = height;
         int oldWidth = width;
-        if (!GameManager.IsPaused()) return;
+        if (!GameManager.IsEditMode()) return;
         if (Input.GetKeyDown(KeyCode.UpArrow) && height < maxHeight)
         {
             height *= 2;

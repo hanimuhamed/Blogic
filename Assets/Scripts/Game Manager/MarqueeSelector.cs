@@ -44,7 +44,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     void Update()
     {
-        if (!GameManager.IsPaused()) return;
+        if (!GameManager.IsEditMode()) return;
         if (Input.GetKey(KeyCode.LeftControl))
         {
             if (Input.GetKeyDown(KeyCode.C)) CopySelection();

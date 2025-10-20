@@ -57,7 +57,7 @@ public class PlaceComponent : MonoBehaviour
         lastMousePos = Input.mousePosition;
         x = Mathf.RoundToInt(mouseWorldPos.x);
         y = Mathf.RoundToInt(mouseWorldPos.y);
-        if (!GameManager.IsPaused())
+        if (!GameManager.IsEditMode())
         {
             if (Input.GetMouseButtonDown(0))
             {
