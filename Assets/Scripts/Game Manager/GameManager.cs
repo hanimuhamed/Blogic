@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject infoPanel;
     private bool isPaused = false;
     public GameObject pausePanel;
+    public GameObject bottomPanel;
     private Queue<WireCluster> clustersToDestroy = new Queue<WireCluster>();
 
     void Awake()
@@ -239,6 +240,7 @@ public class GameManager : MonoBehaviour
     {
         pauseButton.image.sprite = playSprite;
         simText.text = "Edit Mode";
+        bottomPanel.SetActive(true);
         yield return null;
     }
     public IEnumerator EnterSimulationMode()
@@ -255,6 +257,7 @@ public class GameManager : MonoBehaviour
         }
         pauseButton.image.sprite = pauseSprite;
         simText.text = "Simulation Mode";
+        bottomPanel.SetActive(false);
         yield return null;
     }
     public static bool IsEditMode()
@@ -309,9 +312,8 @@ public class GameManager : MonoBehaviour
     }
     public void Resume()
     {
-        isPaused = false;
-        Time.timeScale = 1;
-        pausePanel.SetActive(false);
+        if (!isPaused) return;
+        TogglePause();
     }
     public void Quit()
     {

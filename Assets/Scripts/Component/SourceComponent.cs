@@ -13,7 +13,7 @@ public class SourceComponent : MonoBehaviour
     public SourceComponent inputSource;
     protected bool isOn = false;
     public bool isInitialized = false;
-    public Color darkColor = new Color(0.6f, 0.6f, 0.6f);
+    public Color darkColor = new Color(0.45f, 0.45f, 0.45f);
     //protected Vector2Int pos;
     protected SpriteRenderer sr;
     public GameObject errorHighlight;
