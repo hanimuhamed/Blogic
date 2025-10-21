@@ -91,7 +91,12 @@ public class MarqueeSelector : MonoBehaviour
                 }
                 Vector3 mouse = mouseWorld;
                 // Check if mouse is inside the bounding box
-                if (mouse.x >= minX && mouse.x <= maxX && mouse.y >= minY && mouse.y <= maxY)
+                float left = minX - 0.5f;
+                float right = maxX + 0.5f;
+                float top = maxY + 0.5f;
+                float bottom = minY - 0.5f;
+
+                if (mouse.x >= left && mouse.x <= right && mouse.y >= bottom && mouse.y <= top)
                 {
                     // Begin drag (rest of your drag logic)
                     isDragging = true;
@@ -244,7 +249,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     public void SelectInRect(Vector3 start, Vector3 end)
     {
-        selectedObjects.Clear();
+        if (!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift))) ClearSelection();
 
         Vector3 min = Vector3.Min(start, end);
         Vector3 max = Vector3.Max(start, end);
@@ -264,13 +269,6 @@ public class MarqueeSelector : MonoBehaviour
                 var highlight = obj.transform.Find("Highlight");
                 if (highlight != null)
                     highlight.gameObject.SetActive(true);
-            }
-            else
-            {
-                // Disable highlight if not selected
-                var highlight = obj.transform.Find("Highlight");
-                if (highlight != null)
-                    highlight.gameObject.SetActive(false);
             }
         }
     }

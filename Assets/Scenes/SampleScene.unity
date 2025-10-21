@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.075, g: 0.075, b: 0.075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1507,7 +1507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.075, g: 0.075, b: 0.075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1944,7 +1944,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 400}
+  m_SizeDelta: {x: 320, y: 335}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &650639539
 MonoBehaviour:
@@ -1959,7 +1959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
+  m_Color: {r: 0.04, g: 0.04, b: 0.04, a: 0.5019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4503,7 +4503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.075, g: 0.075, b: 0.075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5230,7 +5230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.075, g: 0.075, b: 0.075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5590,18 +5590,18 @@ MonoBehaviour:
     or 6\n\nMARQUEE (SELECTION TOOL)\n- Select and move components, perform additional
     operations\n- Keys: M or 7\n\nMARQUEE OPERATIONS\n- Cut: Ctrl + X\n- Copy: Ctrl
     + C\n- Paste: Ctrl + V\n- Duplicate: Ctrl + D\n- Select All: Ctrl + A\n- Delete:
-    Del\n- Deselect: RMB\n\nVIEW CONTROLS\r\n- Middle Mouse Button to pan\r\n- Middle
-    Mouse Scroll to zoom in and out\n\nUNDO / REDO\n- Undo: Ctrl + Z\n- Redo: Ctrl
-    + Y or Ctrl + Shift + Z\n\nSAVE\n- Press Ctrl + S to compile and save\n\nGRID
-    AND CLOCK SETTINGS\n- Bottom Right UI:  \n  - Plus and Minus buttons increase
-    or decrease grid size\n  - Keep your components closer to the center to decrease
-    grid size\n  - The input field sets clock frequency in Hz\n\nCIRCULAR DEPENDENCY\n-
-    Occurs when components depend on each other in a loop\n- Highlighted by a yellow
-    box\n- This can sometimes give false positives\r\n- If it does don\u2019t panic,
-    just try recompiling\r\n- Fix any actual loops and recompile\n\nNOTES ON SIMULATION\n-
-    This is a zero-tick simulator, only level-triggered clocks are possible\n- Edge-triggered
-    clocks (e.g., JK flip-flops) will cause circular dependency\n- Use master-slave
-    flip-flops instead\n"
+    Del\n- Deselect: RMB\n- Multiselect: LCtrl/LShift\n\nVIEW CONTROLS\r\n- Middle
+    Mouse Button to pan\r\n- Middle Mouse Scroll to zoom in and out\n\nUNDO / REDO\n-
+    Undo: Ctrl + Z\n- Redo: Ctrl + Y or Ctrl + Shift + Z\n\nSAVE\n- Press Ctrl +
+    S to compile and save\n\nGRID AND CLOCK SETTINGS\n- Bottom Right UI:  \n  - Plus
+    and Minus buttons increase or decrease grid size\n  - Keep your components closer
+    to the center to decrease grid size\n  - The input field sets clock frequency
+    in Hz\n\nCIRCULAR DEPENDENCY\n- Occurs when components depend on each other in
+    a loop\n- Highlighted by a yellow box\n- This can sometimes give false positives\r\n-
+    If it does don\u2019t panic, just try recompiling\r\n- Fix any actual loops and
+    recompile\n\nNOTES ON SIMULATION\n- This is a zero-tick simulator, only level-triggered
+    clocks are possible\n- Edge-triggered clocks (e.g., JK flip-flops) will cause
+    circular dependency\n- Use master-slave flip-flops instead\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
