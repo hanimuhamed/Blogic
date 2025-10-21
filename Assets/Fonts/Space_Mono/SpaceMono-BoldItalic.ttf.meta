@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 86fd6d2efd34a4941a7141a94e36be43
+guid: 6bdf6c88ce72eeb439aa19de1afca424
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Poppins
+  - Space Mono
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
