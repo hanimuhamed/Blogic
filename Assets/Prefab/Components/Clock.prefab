@@ -120,9 +120,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedClusters: []
   inputCluster: {fileID: 0}
+  connectedNot: {fileID: 0}
+  inputSource: {fileID: 0}
   isInitialized: 0
-  isVisited: 0
   darkColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+  errorHighlight: {fileID: 0}
   clockTime: 0.25
 --- !u!1001 &285135031727654534
 PrefabInstance:
