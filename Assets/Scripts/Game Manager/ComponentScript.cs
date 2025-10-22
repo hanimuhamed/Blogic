@@ -42,7 +42,7 @@ public class ComponentScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.LeftControl)) return;
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) return;
         if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Q))
         {
             SetComponentIndex(0);

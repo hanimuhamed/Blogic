@@ -25,6 +25,11 @@ public class SaveManager : MonoBehaviour
 
     void Awake()
     {
+        if (PlayerPrefs.HasKey("SaveSlot"))
+            saveSlot = PlayerPrefs.GetInt("SaveSlot");
+        else
+            saveSlot = 0;
+
         prefabs = GetComponent<Components>().prefabs;
         ComponentScript.ClearLookUp();
         SourceComponent.allSources.Clear();
@@ -43,6 +48,8 @@ public class SaveManager : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha0 + i))
             {
                 saveSlot = i;
+                PlayerPrefs.SetInt("SaveSlot", saveSlot); // Save the current slot
+                PlayerPrefs.Save();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }

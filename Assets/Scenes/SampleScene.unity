@@ -3147,7 +3147,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '#1'
+  m_text: '#67'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4cf513482f07bc643af640a75a848824, type: 2}
   m_sharedMaterial: {fileID: 6712974391490796322, guid: 4cf513482f07bc643af640a75a848824, type: 2}
@@ -5766,15 +5766,16 @@ MonoBehaviour:
     Mouse Button to pan\r\n- Middle Mouse Scroll to zoom in and out\n\nUNDO / REDO\n-
     Undo: Ctrl + Z\n- Redo: Ctrl + Y or Ctrl + Shift + Z\n\nSAVE FILES\n- Press Ctrl
     + S to compile and save\n- There are 10 save files numbered 0-9\n- Press Shift
-    + 0-9 to access the save files\n\nGRID AND CLOCK SETTINGS\n- Bottom Right UI: 
-    \n  - Plus and Minus buttons increase or decrease grid size\n  - Keep your components
-    closer to the center to decrease grid size\n  - The input field sets clock frequency
-    in Hz\n\nCIRCULAR DEPENDENCY\n- Occurs when components depend on each other in
-    a loop\n- Highlighted by a yellow box\n- This can sometimes give false positives\r\n-
-    If it does don\u2019t panic, just try recompiling\r\n- Fix any actual loops and
-    recompile\n\nNOTES ON SIMULATION\n- This is a zero-tick simulator, only level-triggered
-    clocks are possible\n- Edge-triggered clocks (e.g., JK flip-flops) will cause
-    circular dependency\n- Use master-slave flip-flops instead\n"
+    + 0-9 to access the save files\n- Clipboard is preserved\n\nGRID AND CLOCK SETTINGS\n-
+    Bottom Right UI:  \n  - Plus and Minus buttons increase or decrease grid size\n 
+    - Keep your components closer to the center to decrease grid size\n  - The input
+    field sets clock frequency in Hz\n\nCIRCULAR DEPENDENCY\n- Occurs when components
+    depend on each other in a loop\n- Highlighted by a yellow box\n- This can sometimes
+    give false positives\r\n- If it does don\u2019t panic, just try recompiling\r\n-
+    Fix any actual loops and recompile\n\nNOTES ON SIMULATION\n- This is a zero-tick
+    simulator, only level-triggered clocks are possible\n- Edge-triggered clocks
+    (e.g., JK flip-flops) will cause circular dependency\n- Use master-slave flip-flops
+    instead\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4cf513482f07bc643af640a75a848824, type: 2}
   m_sharedMaterial: {fileID: 3969978178831129998, guid: 22286bdc735f9c34da0af4228045a5ce, type: 2}

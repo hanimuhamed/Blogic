@@ -20,8 +20,8 @@ public class MarqueeSelector : MonoBehaviour
     private Dictionary<GameObject, Vector3> dragOffsets = new Dictionary<GameObject, Vector3>();
     private Dictionary<GameObject, (int, int)> originalPositions = new Dictionary<GameObject, (int, int)>();
     public GameManager gameManager;
-    private bool pasteMode = false;
-    private List<GameObject> ghostGroup = new List<GameObject>();
+    private static bool pasteMode = false;
+    private static List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
     private bool isDuplicateMode = false;
     #endregion variables
@@ -34,6 +34,7 @@ public class MarqueeSelector : MonoBehaviour
         meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
         meshRenderer.material.color = marqueeColor;
         marqueeFillObj.SetActive(false);
+        if (pasteMode && ClipboardHolder.clipboard.Count > 0) RecreateGhostGroup();
     }
     void Update()
     {
@@ -44,11 +45,7 @@ public class MarqueeSelector : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.X)) CutSelection();
             if (Input.GetKeyDown(KeyCode.V)) PasteClipboard();
             if (Input.GetKeyDown(KeyCode.D)) DuplicateSelection();
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                ComponentScript.SetComponentIndex(6); // Set to Marquee
-                SelectAll();
-            }
+            if (Input.GetKeyDown(KeyCode.A)) SelectAll();
         }
         if (Input.GetKeyDown(KeyCode.Delete)) DeleteSelection();
         if (Input.GetKeyDown(KeyCode.H)) HideMarquee();
@@ -279,8 +276,9 @@ public class MarqueeSelector : MonoBehaviour
     }
     public void CopySelection()
     {
-        ClipboardHolder.clipboard.Clear();
+        ComponentScript.SetComponentIndex(6);
         if (selectedObjects.Count == 0) return;
+        ClipboardHolder.clipboard.Clear();
         // Use the top-left as the origin
         int minX = int.MaxValue, minY = int.MaxValue;
         foreach (var obj in selectedObjects)
@@ -338,6 +336,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     private void StartPasteMode(bool useClipboard, bool useSelectionAsGhost)
     {
+        ComponentScript.SetComponentIndex(6);
         pasteMode = true;
         ClearGhostGroup();
         List<ClipboardEntry> source = useClipboard ? ClipboardHolder.clipboard : new List<ClipboardEntry>();
@@ -380,6 +379,7 @@ public class MarqueeSelector : MonoBehaviour
     public void UpdatePasteGhost()
     {
         if (!pasteMode || ClipboardHolder.clipboard.Count == 0) return;
+        //Debug.Log("Updating paste ghost...");
         Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
         int mx = Mathf.RoundToInt(mouseWorld.x);
         int my = Mathf.RoundToInt(mouseWorld.y);
@@ -400,6 +400,7 @@ public class MarqueeSelector : MonoBehaviour
         // Move ghost group
         for (int i = 0; i < ghostGroup.Count; i++)
         {
+            if (ghostGroup[i] == null) continue;
             int x = mx + ClipboardHolder.clipboard[i].relativePos.x;
             int y = my + ClipboardHolder.clipboard[i].relativePos.y;
             ghostGroup[i].transform.position = new Vector3(x, y, -1);
@@ -470,8 +471,20 @@ public class MarqueeSelector : MonoBehaviour
     }
     private void SelectAll()
     {
+        ComponentScript.SetComponentIndex(6);
         ClearSelection();
         SelectInRect(new Vector3(-TileSpawner.width, -TileSpawner.height, 0), new Vector3(TileSpawner.width - 1, TileSpawner.height - 1, 0));
         //Debug.Log("Selected all: " + selectedObjects.Count + " objects.");
+    }
+    public void RecreateGhostGroup()
+    {
+        ClearGhostGroup();
+        foreach (var entry in ClipboardHolder.clipboard)
+        {
+            var prefab = components.prefabs[entry.prefabIndex];
+            var ghost = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            // Optionally set ghost visuals here
+            ghostGroup.Add(ghost);
+        }
     }
 }

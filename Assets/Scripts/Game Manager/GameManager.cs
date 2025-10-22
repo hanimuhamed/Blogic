@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     //public Button pauseButton;
     //public Sprite pauseSprite;
     //public Sprite playSprite;
-    private static bool isEditMode = false;
+    private static bool isEditMode = true;
     public GameObject infoPanel;
     private bool isPaused = false;
     public GameObject pausePanel;
@@ -37,7 +37,8 @@ public class GameManager : MonoBehaviour
         compileText.color = Color.white;
         refreshRateField.onEndEdit.AddListener(SetRefreshRate);
         compileText.text = null;
-        StartCoroutine(EnterSimulationMode());
+        
+        EnterMode();
     }
     private void Update()
     {
@@ -76,35 +77,35 @@ public class GameManager : MonoBehaviour
     }
     public IEnumerator Compile()
     {
-        Debug.Log(ComponentScript.GetAllLookUp().Count + " components to compile.");
-        Debug.Log(SourceComponent.allSources.Count + " sources found.");
-        Debug.Log(WireComponent.allWires.Count + " wires found.");
+        //Debug.Log(ComponentScript.GetAllLookUp().Count + " components to compile.");
+        //Debug.Log(SourceComponent.allSources.Count + " sources found.");
+        //Debug.Log(WireComponent.allWires.Count + " wires found.");
         compileText.enabled = true;
         compileText.text = "Compiling...";
         compileText.color = Color.white;
-        Debug.Log("Compilation initiated.");
+        //Debug.Log("Compilation initiated.");
         yield return null;
         ResetComponents();
-        Debug.Log("Components reset.");
+        //Debug.Log("Components reset.");
         yield return null;
         DestroyWireClusters();
-        Debug.Log("Old wire clusters destroyed.");
+        //Debug.Log("Old wire clusters destroyed.");
         yield return null;
         CreateWireClusters();
-        Debug.Log("New wire clusters created and connections established.");
+        //Debug.Log("New wire clusters created and connections established.");
         yield return null;
         ConnectSourceToSource();
-        Debug.Log("Sources connected.");
+        //Debug.Log("Sources connected.");
         yield return null;
         UpdateStates();
-        Debug.Log("States updated.");
+        //Debug.Log("States updated.");
         yield return null;
         if (hasCircularDependency)
         {
             hasCircularDependency = false;
             yield break;
         }
-        Debug.Log("Compilation successful.");
+        //Debug.Log("Compilation successful.");
         isCompiled = true;
         compileText.text = null;
         compileText.enabled = false;
@@ -229,6 +230,11 @@ public class GameManager : MonoBehaviour
     public void ToggleMode()
     {
         isEditMode = !isEditMode;
+        EnterMode();
+    }
+
+    public void EnterMode()
+    {
         if (isEditMode)
         {
             StartCoroutine(EnterEditMode());
@@ -242,6 +248,7 @@ public class GameManager : MonoBehaviour
     public IEnumerator EnterEditMode()
     {
         //pauseButton.image.sprite = playSprite;
+        isEditMode = true;
         simText.text = "Edit Mode";
         bottomPanel.SetActive(true);
         yield return null;
@@ -256,9 +263,10 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Compilation failed. Staying in Edit Mode.");
                 ToggleMode();
                 yield break;
-            }   
+            }
         }
         //pauseButton.image.sprite = pauseSprite;
+        isEditMode = false;
         simText.text = "Simulation Mode";
         bottomPanel.SetActive(false);
         yield return null;
