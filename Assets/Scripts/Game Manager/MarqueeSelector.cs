@@ -1,12 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class ClipboardEntry
-{
-    public int prefabIndex;
-    public Vector2Int relativePos;
-}
+
 public class MarqueeSelector : MonoBehaviour
 {
     #region variables
@@ -25,8 +20,6 @@ public class MarqueeSelector : MonoBehaviour
     private Dictionary<GameObject, Vector3> dragOffsets = new Dictionary<GameObject, Vector3>();
     private Dictionary<GameObject, (int, int)> originalPositions = new Dictionary<GameObject, (int, int)>();
     public GameManager gameManager;
-    private List<ClipboardEntry> clipboard = new List<ClipboardEntry>();
-    private Vector2Int clipboardOrigin;
     private bool pasteMode = false;
     private List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
@@ -118,9 +111,10 @@ public class MarqueeSelector : MonoBehaviour
                 }
             }
         }
-
+    
         // Dragging logic
-        if (isDragging && Input.GetMouseButton(0))
+        bool isMultiSelectKey = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift);
+        if (isDragging && Input.GetMouseButton(0) && !isMultiSelectKey)
         {
             Vector3 mouseDelta = mouseWorld - dragStartMouseWorld;
 
@@ -285,7 +279,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     public void CopySelection()
     {
-        clipboard.Clear();
+        ClipboardHolder.clipboard.Clear();
         if (selectedObjects.Count == 0) return;
         // Use the top-left as the origin
         int minX = int.MaxValue, minY = int.MaxValue;
@@ -296,14 +290,14 @@ public class MarqueeSelector : MonoBehaviour
             if (x < minX) minX = x;
             if (y < minY) minY = y;
         }
-        clipboardOrigin = new Vector2Int(minX, minY);
+        ClipboardHolder.clipboardOrigin = new Vector2Int(minX, minY);
 
         foreach (var obj in selectedObjects)
         {
             int x = Mathf.RoundToInt(obj.transform.position.x);
             int y = Mathf.RoundToInt(obj.transform.position.y);
             int prefabIndex = GetPrefabIndex(obj);
-            clipboard.Add(new ClipboardEntry
+            ClipboardHolder.clipboard.Add(new ClipboardEntry
             {
                 prefabIndex = prefabIndex,
                 relativePos = new Vector2Int(x - minX, y - minY)
@@ -338,7 +332,7 @@ public class MarqueeSelector : MonoBehaviour
     }
     public void PasteClipboard()
     {
-        if (clipboard.Count == 0) return;
+        if (ClipboardHolder.clipboard.Count == 0) return;
         isDuplicateMode = false;
         StartPasteMode(useClipboard: true, useSelectionAsGhost: false);
     }
@@ -346,7 +340,7 @@ public class MarqueeSelector : MonoBehaviour
     {
         pasteMode = true;
         ClearGhostGroup();
-        List<ClipboardEntry> source = useClipboard ? clipboard : new List<ClipboardEntry>();
+        List<ClipboardEntry> source = useClipboard ? ClipboardHolder.clipboard : new List<ClipboardEntry>();
         if (useSelectionAsGhost)
         {
             // Use selected objects as ghost group for duplicate
@@ -358,7 +352,7 @@ public class MarqueeSelector : MonoBehaviour
                 if (x < minX) minX = x;
                 if (y < minY) minY = y;
             }
-            clipboardOrigin = new Vector2Int(minX, minY);
+            ClipboardHolder.clipboardOrigin = new Vector2Int(minX, minY);
             source.Clear();
             foreach (var obj in selectedObjects)
             {
@@ -385,17 +379,17 @@ public class MarqueeSelector : MonoBehaviour
     }
     public void UpdatePasteGhost()
     {
-        if (!pasteMode || clipboard.Count == 0) return;
+        if (!pasteMode || ClipboardHolder.clipboard.Count == 0) return;
         Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
         int mx = Mathf.RoundToInt(mouseWorld.x);
         int my = Mathf.RoundToInt(mouseWorld.y);
 
         // Check bounds
         bool canPaste = true;
-        for (int i = 0; i < clipboard.Count; i++)
+        for (int i = 0; i < ClipboardHolder.clipboard.Count; i++)
         {
-            int x = mx + clipboard[i].relativePos.x;
-            int y = my + clipboard[i].relativePos.y;
+            int x = mx + ClipboardHolder.clipboard[i].relativePos.x;
+            int y = my + ClipboardHolder.clipboard[i].relativePos.y;
             if (x < -TileSpawner.width || x >= TileSpawner.width || y < -TileSpawner.height || y >= TileSpawner.height)
             {
                 canPaste = false;
@@ -406,8 +400,8 @@ public class MarqueeSelector : MonoBehaviour
         // Move ghost group
         for (int i = 0; i < ghostGroup.Count; i++)
         {
-            int x = mx + clipboard[i].relativePos.x;
-            int y = my + clipboard[i].relativePos.y;
+            int x = mx + ClipboardHolder.clipboard[i].relativePos.x;
+            int y = my + ClipboardHolder.clipboard[i].relativePos.y;
             ghostGroup[i].transform.position = new Vector3(x, y, -1);
             ghostGroup[i].SetActive(canPaste);
         }
@@ -442,17 +436,17 @@ public class MarqueeSelector : MonoBehaviour
     {
         // Place all objects, replacing existing
         List<GameObject> newSelection = new List<GameObject>();
-        for (int i = 0; i < clipboard.Count; i++)
+        for (int i = 0; i < ClipboardHolder.clipboard.Count; i++)
         {
-            int x = mx + clipboard[i].relativePos.x;
-            int y = my + clipboard[i].relativePos.y;
+            int x = mx + ClipboardHolder.clipboard[i].relativePos.x;
+            int y = my + ClipboardHolder.clipboard[i].relativePos.y;
             var key = (x, y);
             if (ComponentScript.GetAllLookUp().ContainsKey(key))
             {
                 var toDestroy = ComponentScript.GetAllLookUp()[key];
                 if (toDestroy != null) Destroy(toDestroy);
             }
-            var prefab = components.prefabs[clipboard[i].prefabIndex];
+            var prefab = components.prefabs[ClipboardHolder.clipboard[i].prefabIndex];
             var obj = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity);
             ComponentScript.SetLookUp(obj);
             newSelection.Add(obj);

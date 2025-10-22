@@ -15,9 +15,9 @@ public class GameManager : MonoBehaviour
     public static bool hasCircularDependency = false;
     public static float simTime = 0.25f;
     public TMP_InputField refreshRateField;
-    public Button pauseButton;
-    public Sprite pauseSprite;
-    public Sprite playSprite;
+    //public Button pauseButton;
+    //public Sprite pauseSprite;
+    //public Sprite playSprite;
     private static bool isEditMode = false;
     public GameObject infoPanel;
     private bool isPaused = false;
@@ -75,26 +75,29 @@ public class GameManager : MonoBehaviour
         compileText.text = null;
     }
     public IEnumerator Compile()
-    {  
+    {
+        Debug.Log(ComponentScript.GetAllLookUp().Count + " components to compile.");
+        Debug.Log(SourceComponent.allSources.Count + " sources found.");
+        Debug.Log(WireComponent.allWires.Count + " wires found.");
         compileText.enabled = true;
         compileText.text = "Compiling...";
         compileText.color = Color.white;
-        //Debug.Log("Compilation initiated.");
+        Debug.Log("Compilation initiated.");
         yield return null;
         ResetComponents();
-        //Debug.Log("Components reset.");
+        Debug.Log("Components reset.");
         yield return null;
         DestroyWireClusters();
-        //Debug.Log("Old wire clusters destroyed.");
+        Debug.Log("Old wire clusters destroyed.");
         yield return null;
         CreateWireClusters();
-        //Debug.Log("New wire clusters created and connections established.");
+        Debug.Log("New wire clusters created and connections established.");
         yield return null;
         ConnectSourceToSource();
-        //Debug.Log("Sources connected.");
+        Debug.Log("Sources connected.");
         yield return null;
         UpdateStates();
-        //Debug.Log("States updated.");
+        Debug.Log("States updated.");
         yield return null;
         if (hasCircularDependency)
         {
@@ -238,7 +241,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator EnterEditMode()
     {
-        pauseButton.image.sprite = playSprite;
+        //pauseButton.image.sprite = playSprite;
         simText.text = "Edit Mode";
         bottomPanel.SetActive(true);
         yield return null;
@@ -255,7 +258,7 @@ public class GameManager : MonoBehaviour
                 yield break;
             }   
         }
-        pauseButton.image.sprite = pauseSprite;
+        //pauseButton.image.sprite = pauseSprite;
         simText.text = "Simulation Mode";
         bottomPanel.SetActive(false);
         yield return null;

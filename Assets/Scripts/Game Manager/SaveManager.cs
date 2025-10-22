@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 public class SaveManager : MonoBehaviour
 {
@@ -15,12 +18,34 @@ public class SaveManager : MonoBehaviour
     private List<GameObject> prefabs; // Assign all possible prefabs in Inspector in order: Input, Wire, Not, Cross, Clock
     public Transform workspace; // Assign in Inspector or find at runtime
 
+    public static int saveSlot = 0;
+    public static string SavePath => Application.persistentDataPath + $"/lookup_save_{saveSlot}.json";
+    public static string MetaPath => Application.persistentDataPath + $"/lookup_save_meta_{saveSlot}.json";
+    public TextMeshProUGUI fileIndicatorText;
+
     void Awake()
     {
-        //PlayerPrefs.DeleteKey("LookUpSave");
-        //PlayerPrefs.Save();
         prefabs = GetComponent<Components>().prefabs;
+        ComponentScript.ClearLookUp();
+        SourceComponent.allSources.Clear();
+        WireCluster.allClusters.Clear();
+        WireComponent.allWires.Clear();
+        WireComponent.unclusturedWires.Clear();
         LoadLookUp();
+        fileIndicatorText.text = $"#{saveSlot}";
+    }
+
+    void Update()
+    {
+        // Listen for LShift + 0-9 to change save slot and reload scene
+        for (int i = 0; i <= 9; i++)
+        {
+            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha0 + i))
+            {
+                saveSlot = i;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
 
     public static void SaveLookUp()
@@ -31,8 +56,6 @@ public class SaveManager : MonoBehaviour
             var obj = kvp.Value;
             if (obj == null) continue;
             if (!obj) continue;
-
-            // Find prefab index by comparing prefab type (assumes prefab order matches type index)
             int prefabIndex = -1;
             for (int i = 0; i < ComponentScript.PrefabNames.Length; i++)
             {
@@ -42,8 +65,7 @@ public class SaveManager : MonoBehaviour
                     break;
                 }
             }
-            if (prefabIndex == -1) continue; // Skip if not found
-
+            if (prefabIndex == -1) continue;
             saveList.Add(new SavedObject
             {
                 x = kvp.Key.Item1,
@@ -53,37 +75,30 @@ public class SaveManager : MonoBehaviour
             });
         }
         string json = JsonUtility.ToJson(new Serialization<List<SavedObject>>(saveList));
-        PlayerPrefs.SetString("LookUpSave", json);
-        PlayerPrefs.Save();
+        File.WriteAllText(SavePath, json);
     }
 
     public void LoadLookUp()
     {
-        string json = PlayerPrefs.GetString("LookUpSave", "");
+        if (!File.Exists(SavePath)) return;
+        string json = File.ReadAllText(SavePath);
         if (string.IsNullOrEmpty(json)) return;
-
         var saveList = JsonUtility.FromJson<Serialization<List<SavedObject>>>(json).target;
         foreach (var saved in saveList)
         {
             if (saved.prefabIndex < 0 || saved.prefabIndex >= prefabs.Count) continue;
             var prefab = prefabs[saved.prefabIndex];
             var obj = Instantiate(prefab, new Vector3(saved.x, saved.y, 0), Quaternion.identity, workspace);
-            /*var popIn = obj.GetComponent<PopIn>();
-            if (popIn != null)
-                popIn.skipPop = true;*/
             ComponentScript.SetLookUp(obj);
-
             var source = obj.GetComponent<SourceComponent>();
             if (source != null)
             {
-                //Debug.Log("Restoring state for SourceComponent at (" + saved.x + ", " + saved.y + ") to " + (saved.state ? "ON" : "OFF"));
                 source.SetState(saved.state);
                 source.isInitialized = true;
             }
         }
     }
 
-    // Helper for serializing lists
     [System.Serializable]
     public class Serialization<T>
     {

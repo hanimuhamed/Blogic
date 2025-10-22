@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PopIn : MonoBehaviour
 {
-    public float duration = 0.3f;
+    private float duration = 0.1f;
     public Vector3 targetScale = Vector3.one;
     public bool skipPop = false;
 
