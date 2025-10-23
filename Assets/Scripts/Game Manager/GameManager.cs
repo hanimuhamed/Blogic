@@ -77,35 +77,52 @@ public class GameManager : MonoBehaviour
     }
     public IEnumerator Compile()
     {
-        //Debug.Log(ComponentScript.GetAllLookUp().Count + " components to compile.");
-        //Debug.Log(SourceComponent.allSources.Count + " sources found.");
-        //Debug.Log(WireComponent.allWires.Count + " wires found.");
         compileText.enabled = true;
         compileText.text = "Compiling...";
         compileText.color = Color.white;
-        //Debug.Log("Compilation initiated.");
-        yield return null;
-        ResetComponents();
-        //Debug.Log("Components reset.");
-        yield return null;
-        DestroyWireClusters();
-        //Debug.Log("Old wire clusters destroyed.");
-        yield return null;
-        CreateWireClusters();
-        //Debug.Log("New wire clusters created and connections established.");
-        yield return null;
-        ConnectSourceToSource();
-        //Debug.Log("Sources connected.");
-        yield return null;
-        UpdateStates();
-        //Debug.Log("States updated.");
-        yield return null;
+
+        float timeout = 10f;
+        float elapsed = 0f;
+        bool finished = false;
+
+        IEnumerator CompileSteps()
+        {
+            yield return null;
+            ResetComponents();
+            yield return null;
+            DestroyWireClusters();
+            yield return null;
+            CreateWireClusters();
+            yield return null;
+            ConnectSourceToSource();
+            yield return null;
+            UpdateStates();
+            yield return null;
+            finished = true;
+        }
+
+        var steps = CompileSteps();
+        while (!finished && elapsed < timeout)
+        {
+            float frameStart = Time.realtimeSinceStartup;
+            if (!steps.MoveNext()) break;
+            yield return steps.Current;
+            elapsed += Time.realtimeSinceStartup - frameStart;
+        }
+
+        if (!finished)
+        {
+            compileText.text = "Compilation timeout.";
+            compileText.color = Color.yellow;
+            compileText.enabled = true;
+            yield break;
+        }
+
         if (hasCircularDependency)
         {
             hasCircularDependency = false;
             yield break;
         }
-        //Debug.Log("Compilation successful.");
         isCompiled = true;
         compileText.text = null;
         compileText.enabled = false;

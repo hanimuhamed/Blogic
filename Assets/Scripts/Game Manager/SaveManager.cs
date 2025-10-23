@@ -45,7 +45,8 @@ public class SaveManager : MonoBehaviour
         // Listen for LShift + 0-9 to change save slot and reload scene
         for (int i = 0; i <= 9; i++)
         {
-            if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha0 + i))
+            bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            if (shiftHeld && Input.GetKeyDown(KeyCode.Alpha0 + i))
             {
                 saveSlot = i;
                 PlayerPrefs.SetInt("SaveSlot", saveSlot); // Save the current slot

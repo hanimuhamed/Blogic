@@ -157,11 +157,11 @@ public class PlaceComponent : MonoBehaviour
 
     void UpdateGhostSprite(int x, int y, int index)
     {
-        Vector3 ghostPos = new Vector3(x, y, 0);
+        Vector3 ghostPos = new Vector3(x, y, -1);
         bool isEraser = index == 5;
         bool isErasing = Input.GetMouseButton(0) && isEraser || Input.GetMouseButton(1);
         Sprite spriteToShow = null;
-        float alpha = 0.05f;
+        float alpha = 0.2f;  
 
         if (isEraser || Input.GetMouseButton(1))
         {

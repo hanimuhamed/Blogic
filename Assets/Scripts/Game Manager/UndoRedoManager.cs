@@ -12,9 +12,12 @@ public class UndoRedoManager : MonoBehaviour
     // Pool: one list per prefab index
     private List<GameObject>[] pools;
     private GameManager gameManager;
-    private float undoRedoCooldown = 0.25f; // seconds
     private float undoRedoTimer = 0f;
+    private bool isFirstUndoRedo = true;
+    private float initialCooldown = 0.25f;
+    private float fastCooldown = 0.08f;
     public TileSpawner spawner; // Assign in Inspector or find at runtime
+    
 
     [System.Serializable]
     private class UndoRedoState
@@ -41,12 +44,7 @@ public class UndoRedoManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0) ||
             Input.GetMouseButtonUp(1) ||
             Input.GetKeyUp(KeyCode.Delete) ||
-            Input.GetKeyUp(KeyCode.X) ||
-            
-            Input.GetKeyUp(KeyCode.UpArrow) ||
-            Input.GetKeyUp(KeyCode.DownArrow) ||
-            Input.GetKeyUp(KeyCode.LeftArrow) ||
-            Input.GetKeyUp(KeyCode.RightArrow))
+            Input.GetKeyUp(KeyCode.X))
         {
             string currentState = SerializeLookUp();
             if (currentState != lastState)
@@ -56,21 +54,52 @@ public class UndoRedoManager : MonoBehaviour
                 lastState = currentState;
             }
         }
-        undoRedoTimer += Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftControl))
+        HandleUndoRedo();
+    }
+
+    private void HandleUndoRedo()
+    {
+        bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        bool undoHeld = ctrlHeld && Input.GetKey(KeyCode.Z);
+        bool redoHeld = ctrlHeld && (Input.GetKey(KeyCode.Y) || (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.Z)));
+
+        if (ctrlHeld)
         {
-            if (undoRedoTimer < undoRedoCooldown)
+            if (undoHeld || redoHeld)
             {
-                return;
+                if (isFirstUndoRedo)
+                {
+                    if (undoRedoTimer == 0f)
+                    {
+                        // First press
+                        if (undoHeld)
+                            Undo();
+                        else if (redoHeld)
+                            Redo();
+                    }
+                    undoRedoTimer += Time.deltaTime;
+                    if (undoRedoTimer >= initialCooldown)
+                    {
+                        isFirstUndoRedo = false;
+                        undoRedoTimer = 0f;
+                    }
+                }
+                else
+                {
+                    undoRedoTimer += Time.deltaTime;
+                    if (undoRedoTimer >= fastCooldown)
+                    {
+                        if (undoHeld)
+                            Undo();
+                        else if (redoHeld)
+                            Redo();
+                        undoRedoTimer = 0f;
+                    }
+                }
             }
-            else if (Input.GetKey(KeyCode.Y) || (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.Z)))
+            else
             {
-                Redo();
-                undoRedoTimer = 0f;
-            }
-            else if (Input.GetKey(KeyCode.Z))
-            {
-                Undo();
+                isFirstUndoRedo = true;
                 undoRedoTimer = 0f;
             }
         }
