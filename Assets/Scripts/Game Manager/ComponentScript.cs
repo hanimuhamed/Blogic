@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 public class ComponentScript : MonoBehaviour
 {
-    public static int componentIndex = 1; // Default to Wire
+    public static int componentIndex = 6; // Default to Marquee
     private static Dictionary<(int, int), GameObject> LookUp = new Dictionary<(int, int), GameObject>();
     public static readonly string[] PrefabNames = { "Input", "Wire", "Not", "Cross", "Clock", "Eraser", "Marquee" };
+    public List<GameObject> highlight;
     
+    void Awake()
+    {
+        for (int i = 0; i < highlight.Count; i++)
+        {
+            highlight[i].SetActive(i == componentIndex);
+        }
+    }
     public static void ClearLookUp()
     {
         LookUp.Clear();
@@ -38,6 +46,14 @@ public class ComponentScript : MonoBehaviour
     {
         componentIndex = index;
         //TileScript.componentChanged = true;
+        var instance = FindFirstObjectByType<ComponentScript>();
+        if (instance != null && instance.highlight != null)
+        {
+            for (int i = 0; i < instance.highlight.Count; i++)
+            {
+                instance.highlight[i].SetActive(i == index);
+            }
+        }
     }
 
     void Update()

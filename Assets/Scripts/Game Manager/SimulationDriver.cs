@@ -14,7 +14,7 @@ public class SimulationDriver : MonoBehaviour
             {
                 var go = new GameObject("SimulationDriver");
                 _instance = go.AddComponent<SimulationDriver>();
-                DontDestroyOnLoad(go);
+                //DontDestroyOnLoad(go);
                 _instance.gameManager = GameObject.FindFirstObjectByType<GameManager>();
             }
             return _instance;
