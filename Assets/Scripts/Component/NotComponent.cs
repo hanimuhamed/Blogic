@@ -12,10 +12,6 @@ public class NotComponent : SourceComponent
         errorHighlight = gameObject.transform.GetChild(0).gameObject;
         errorHighlight.SetActive(false);
         allSources.Add(this);
-        /*pos = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x),
-            Mathf.RoundToInt(transform.position.y)
-        );*/
     }
     public override void UpdateState()
     {

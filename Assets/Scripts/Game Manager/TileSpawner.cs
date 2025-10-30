@@ -8,22 +8,17 @@ public class TileSpawner : MonoBehaviour
     public Transform tileSpace;
     public static int width = 16;
     public static int height = 16;
-    private int maxWidth = 512;
-    private int maxHeight = 512;
+    private int maxWidth = 1024;
+    private int maxHeight = 1024;
     //private bool sizeIsChanged = false;
-    public GameObject SpawnTile(int x, int y)
+    public GameObject SpawnTile(float x, float y)
     {
         return Instantiate(tile, new Vector3(x, y, 1), Quaternion.identity, tileSpace);
     }
     public void SpawnGrid(int width, int height)
     {
-        for (int x = -width; x < width; x += tileSize)
-        {
-            for (int y = -height; y < height; y += tileSize)
-            {
-                GameObject newTile = SpawnTile(x, y);
-            }
-        }
+        GameObject newTile = SpawnTile(-width - 0.5f, -height - 0.5f);
+        newTile.transform.localScale = new Vector3(width/16f, height/16f, 1);
     }
     public void ClearGrid()
     {
@@ -122,6 +117,7 @@ public class TileSpawner : MonoBehaviour
             return;
         }
         SetGridSizeChange();
+        CenterCameraOnGrid();
     }
     public void DecreaseGridSize()
     {
@@ -134,6 +130,7 @@ public class TileSpawner : MonoBehaviour
             return;
         }
         SetGridSizeChange();
+        CenterCameraOnGrid();
     }
     private void SetGridSizeChange()
     {
