@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
         //Application.targetFrameRate = 60;
         infoPanel.SetActive(false);
         pausePanel.SetActive(false);
+        Time.timeScale = 1f;
     }
     void Start()
     {
@@ -229,7 +231,9 @@ public class GameManager : MonoBehaviour
 
         if (float.TryParse(rate, out float result))
         {
-            float clamped = Mathf.Clamp(result, 1, 240);
+            var refreshRateRatio = Screen.currentResolution.refreshRateRatio;
+            float refreshRate = (float)refreshRateRatio.numerator / refreshRateRatio.denominator;
+            float clamped = Mathf.Clamp(result, 1, refreshRate);
             simTime = 1 / clamped;
 
             // Update the InputField text in case the user typed a value out of bounds
@@ -345,7 +349,7 @@ public class GameManager : MonoBehaviour
     }
     public void Quit()
     {
-        Application.Quit();
+        SceneManager.LoadScene("MenuScene");
     }
     public void Save()
     {

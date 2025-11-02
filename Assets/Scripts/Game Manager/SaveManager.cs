@@ -56,6 +56,21 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    public void LoadNext()
+    {
+        saveSlot = (saveSlot + 1) % 10;
+        PlayerPrefs.SetInt("SaveSlot", saveSlot);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void LoadPrevious()
+    {
+        saveSlot = (saveSlot - 1 + 10) % 10;
+        PlayerPrefs.SetInt("SaveSlot", saveSlot);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     public static void SaveLookUp()
     {
         var saveList = new List<SavedObject>();

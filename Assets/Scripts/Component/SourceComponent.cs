@@ -128,8 +128,8 @@ public class SourceComponent : MonoBehaviour
     }
     public void Toggle()
     {
-        Dictionary<(int, int), int> visited = new Dictionary<(int, int), int>();
         SetState(!IsOn());
+        Dictionary<(int, int), int> visited = new Dictionary<(int, int), int>();
         SimulationDriver.Instance.EnqueueRoutine(() => UpdateNext(visited));
         SimulationDriver.Instance.RunAll();
         return;

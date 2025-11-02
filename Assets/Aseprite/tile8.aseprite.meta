@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 638956158317536309
+  platformSettingsDirtyTick: 638977064099707599
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -129,8 +129,8 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: tile8
     originalName: 
-    pivot: {x: 0.0625, y: 0.0625}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -139,7 +139,7 @@ ScriptedImporter:
       y: 4
       width: 56
       height: 56
-    spriteID: 0258b9d870067384f88f5362a4c6672b
+    spriteID: 587bea12194124943b26844de2f901ff
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -171,7 +171,7 @@ ScriptedImporter:
         y: 0
         width: 56
         height: 56
-      spriteId: 0258b9d870067384f88f5362a4c6672b
+      spriteId: 587bea12194124943b26844de2f901ff
     linkedCells: []
     tileCells: []
     tileSetIndex: 0

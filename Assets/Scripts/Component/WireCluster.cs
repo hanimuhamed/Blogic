@@ -6,7 +6,7 @@ using System.Collections;
 public class WireCluster : MonoBehaviour
 {
     public static List<WireCluster> allClusters = new List<WireCluster>();
-    private List<WireComponent> wires = new List<WireComponent>();
+    public List<WireComponent> wires = new List<WireComponent>();
     public List<NotComponent> connectedNots = new List<NotComponent>();
     public List<SourceComponent> inputSources = new List<SourceComponent>();
     private bool isOn = false;
