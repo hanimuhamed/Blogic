@@ -4,9 +4,13 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     public GameObject guidePanel;
+    public GameObject projectPanel;
+    public GameObject aboutPanel;
     public void Awake()
     {
         guidePanel.SetActive(false);
+        projectPanel.SetActive(false);
+        aboutPanel.SetActive(false);
     }
     /*public void NewProjectPanel()
     {
@@ -14,7 +18,7 @@ public class MenuManager : MonoBehaviour
     }*/
     public void OpenProjectPanel()
     {
-        SceneManager.LoadScene("MainScene");
+        projectPanel.SetActive(true);
     }
     /*public void SettingsPanel()
     {
@@ -26,11 +30,20 @@ public class MenuManager : MonoBehaviour
     }
     public void AboutPanel()
     {
-        // Future implementation for about menu
+        aboutPanel.SetActive(true);
+    }
+    public void CloseAboutPanel()
+    {
+        aboutPanel.SetActive(false);
     }
     public void Exit()
     {
         Application.Quit();
+    }
+    public void CloseProjectPanel()
+    {
+        projectPanel.SetActive(false);
+        //hello
     }
     public void CloseGuidePanel()
     {
@@ -38,7 +51,7 @@ public class MenuManager : MonoBehaviour
     }
     public void OpenGithub()
     {
-        Application.OpenURL("https://github.com/hanimuhamed/Blogic");
+        Application.OpenURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     }
     public void OpenTutorial()
     {

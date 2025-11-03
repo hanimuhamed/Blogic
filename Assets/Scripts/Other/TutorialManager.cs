@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class TutorialManager : MonoBehaviour
         {
             bc.enabled = true;
         }
+        TextMeshPro[] texts = circuit.GetComponentsInChildren<TextMeshPro>();
+        foreach (TextMeshPro tmp in texts)
+        {
+            tmp.enabled = true;
+        }
     }
     void Hide(GameObject circuit)
     {
@@ -31,6 +37,11 @@ public class TutorialManager : MonoBehaviour
         foreach (BoxCollider2D bc in colliders)
         {
             bc.enabled = false;
+        }
+        TextMeshPro[] texts = circuit.GetComponentsInChildren<TextMeshPro>();
+        foreach (TextMeshPro tmp in texts)
+        {
+            tmp.enabled = false;
         }
     }
     void HideAll(List<GameObject> circuits)

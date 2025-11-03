@@ -40,6 +40,7 @@ public class SimulationDriver : MonoBehaviour
         routineQueue.Clear();
         if (GameManager.hasCircularDependency)
         {
+            if (gameManager == null) return;
             gameManager.isCompiled = false;
             gameManager.compileText.text = "Circular dependency detected!";
             gameManager.compileText.enabled = true;

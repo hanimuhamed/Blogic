@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public GameObject pausePanel;
     public GameObject bottomPanel;
     private Queue<WireCluster> clustersToDestroy = new Queue<WireCluster>();
+    public TextMeshProUGUI projectName;
 
     void Awake()
     {
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
         infoPanel.SetActive(false);
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
+        projectName.text = ProjectManager.currentProjectName;
     }
     void Start()
     {

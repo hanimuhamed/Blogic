@@ -19,8 +19,9 @@ public class SaveManager : MonoBehaviour
     public Transform workspace; // Assign in Inspector or find at runtime
 
     public static int saveSlot = 0;
-    public static string SavePath => Application.persistentDataPath + $"/lookup_save_{saveSlot}.json";
-    public static string MetaPath => Application.persistentDataPath + $"/lookup_save_meta_{saveSlot}.json";
+    private static string projectName = ProjectManager.currentProject != null ? ProjectManager.currentProjectName : "DefaultProject";
+    public static string SavePath => Application.persistentDataPath + $"/Projects/{projectName}/Save/save_slot_{saveSlot}.json";
+    public static string MetaPath => Application.persistentDataPath + $"/Projects/{projectName}/Meta/meta_slot_{saveSlot}.json";
     public TextMeshProUGUI fileIndicatorText;
 
     void Awake()
