@@ -20,7 +20,7 @@ public class MarqueeSelector : MonoBehaviour
     private Dictionary<GameObject, Vector3> dragOffsets = new Dictionary<GameObject, Vector3>();
     private Dictionary<GameObject, (int, int)> originalPositions = new Dictionary<GameObject, (int, int)>();
     public GameManager gameManager;
-    private static bool pasteMode = false;
+    public static bool pasteMode = false;
     private static List<GameObject> ghostGroup = new List<GameObject>();
     public Components components;
     private bool isDuplicateMode = false;
@@ -49,13 +49,13 @@ public class MarqueeSelector : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Delete)) DeleteSelection();
         if (Input.GetKeyDown(KeyCode.H)) HideMarquee();
-        if (Input.GetMouseButtonDown(1)) // Right click cancels marquee, paste, drag
+        /*if (Input.GetMouseButtonDown(1)) // Right click cancels marquee, paste, drag
         {
             HideMarquee();
             ClearSelection();
             CancelPasteMode();
             isDragging = false;
-        }
+        }*/
         if (pasteMode)
             UpdatePasteGhost();
     }
@@ -420,7 +420,7 @@ public class MarqueeSelector : MonoBehaviour
             gameManager.isCompiled = false;
         }
         // Cancel paste on right click
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonUp(1))
         {
             HideMarquee();
             ClearSelection();

@@ -3,7 +3,6 @@ using UnityEngine;
 public class InputToggle : MonoBehaviour
 {
     private SourceComponent sourceComponent;
-    private float simTime = 0.25f;
     void Awake()
     {
         sourceComponent = GetComponent<SourceComponent>();
