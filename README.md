@@ -1,5 +1,7 @@
 # nandScape
 
+![Banner](Assets/Images/Title.png)
+
 nandScape is a sandbox-style digital logic simulator for exploring how computation emerges from basic logic gates.  
 It offers an intuitive grid-based environment where circuits can be drawn like pixel art and simulated in real time.  
 From a single NAND gate to a complete processor, nandScape provides a space to design, test, and understand digital logic systems interactively.
