@@ -1,44 +1,36 @@
 # nandScape
 
-**nandScape** is a sandbox-style **digital logic simulator** that lets you draw circuits and watch them come alive in real time.  
-Built to be a playground for tinkerers, computer architecture enthusiasts, and anyone fascinated by how computation emerges from nothing but logic gates. From a single NAND to a fully working CPU, you can build it all, right inside nandScape.
+nandScape is a sandbox-style digital logic simulator for exploring how computation emerges from basic logic gates.  
+It offers an intuitive grid-based environment where circuits can be drawn like pixel art and simulated in real time.  
+From a single NAND gate to a complete processor, nandScape provides a space to design, test, and understand digital logic systems interactively.
 
 ---
 
-## Why nandScape?
+## Purpose
 
-Unlike traditional circuit simulators, nandScape is designed as a **creative sandbox** rather than a strict engineering tool.  
-It treats logic design as an art form, each circuit is a pattern, each signal a living pulse.  
-You’re free to explore, break, and rebuild ideas from the ground up.
-
-- Build flip-flops, adders, multiplexers, and even CPUs  
-- Visualize real-time logic flow in a grid-based space  
-- Mix engineering with pixel-perfect creativity  
-- No simulation delay, everything reacts instantly  
-- Designed to encourage experimentation and discovery  
+nandScape is built as an open-ended creative environment rather than a conventional circuit design tool.  
+It allows instant experimentation through a zero-tick simulation model, where every change is reflected immediately.  
+Users can construct and observe digital systems dynamically, gaining insight into how simple logical relationships can scale into complex computational behavior.
 
 ---
 
 ## Features
 
-- Zero-tick simulation (instant level-triggered logic)
-- Component-based sandbox: input, wire, not gate, clocks, and more
-- Ten save slots within each projects with clipboard persistence for manageability
-- Adjustable grid and clock frequency
-- Full editing suite: copy, paste, duplicate, undo, redo
-- Dynamic view control and quick mode switching
-- Capable of simulating full computational units (ALUs, registers, memory, etc.)
+- Zero-tick simulation with immediate signal propagation  
+- Grid-based circuit construction inspired by pixel art design  
+- Component-based system including inputs, wires, logic gates, and clocks  
+- Circular dependency detection to identify and highlight feedback loops  
+- Project-based save system, with multiple save slots within each project for modular circuit development  
+  - For example, an ALU can be built in slot 0, a 1-bit adder in slot 1, and an 8-bit adder in slot 2  
+
 
 ---
 
 ## Download
 
-The latest playable build of **nandScape** is available under the  
-[**Releases**](https://github.com/<your-username>/nandScape/releases) section of this repository.  
+The latest playable build of **nandScape** is available in [**Releases**](https://github.com/hanimuhamed/nandScape/releases)
 1. Download the latest `.7z` build for your platform.  
 2. Extract and run it, no installation required.
-
-> **Note:** First-time startup may take a few seconds while the simulation environment initializes.
 
 ---
 
@@ -48,14 +40,12 @@ If you’d like to explore or modify the project in Unity, you can clone it from
 
 ### Clone the repository
 ```bash
-git clone https://github.com/<your-username>/nandScape.git
+git clone https://github.com/hanimuhamed/nandScape.git
 ```
 ### Open in Unity
 
 1. Launch **Unity 6000.1.13f1** (tested and verified version).  
 2. Choose **Open Project** and select the cloned `nandScape` folder.  
-3. Wait for Unity to complete the first-time asset import — this may take a few minutes.  
-4. Once loaded, enter **Play Mode** to start the sandbox environment.
 
 > **Note:** The project is designed for Unity 6 (2025).  
 > Newer Unity 6.x releases should remain compatible, though reimports may be required.
