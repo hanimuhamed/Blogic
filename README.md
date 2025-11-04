@@ -1,6 +1,6 @@
-# nandScape
+<img src="Assets/Images/Title.png" alt="Title" width="1440"/>  
 
-![Banner](Assets/Images/Title.png)
+# nandScape
 
 nandScape is a sandbox-style digital logic simulator for exploring how computation emerges from basic logic gates.  
 It offers an intuitive grid-based environment where circuits can be drawn like pixel art and simulated in real time.  
@@ -25,6 +25,11 @@ Users can construct and observe digital systems dynamically, gaining insight int
 - Project-based save system, with multiple save slots within each project for modular circuit development  
   - For example, an ALU can be built in slot 0, a 1-bit adder in slot 1, and an 8-bit adder in slot 2  
 
+---
+
+<img src="Assets/Images/counter.png" alt="8-bit Counter" width="720"/>  
+
+*An 8-bit up counter constructed from eight JK master–slave flip-flops, with outputs driving seven-segment displays.*  
 
 ---
 
