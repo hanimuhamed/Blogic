@@ -7272,7 +7272,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: '<color=#AAAAFF>Input block</color> can send power to <color=#CCCCEE>wire
-    blocks</color> connected it
+    blocks</color> connected to it
 
 '
   m_isRightToLeft: 0

@@ -14,8 +14,14 @@ public class MarqueeMenu : MonoBehaviour
     }
     void Update()
     {
-        if (ComponentScript.componentIndex != 6) return;
-        if (!GameManager.IsEditMode()) return;
+        if (ComponentScript.componentIndex != 6 || !GameManager.IsEditMode())
+        {
+            if (pasteMenu.activeSelf)
+                pasteMenu.SetActive(false);
+            if (selectionMenu.activeSelf)
+                selectionMenu.SetActive(false);
+            return;
+        }
         if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonDown(2))
         {
             pasteMenu.SetActive(false);
