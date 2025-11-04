@@ -1,10 +1,10 @@
 <img src="Assets/Images/Title.png" alt="Title" width="1440"/>  
 
 <p align="center">
-  <a href="https://github.com/hanimuhamed/nandScape/releases/download/v1.0.0-beta.1/nandScape-v1.0.0-beta.1-Windows.zip">
+  <a href="https://github.com/hanimuhamed/nandScape/releases/download/v1.0.0-beta.1/nandScape-v1.0.0-beta.1-Windows.7z">
     <img src="https://img.shields.io/badge/Download-Windows-0078D6?logo=windows&logoColor=white" alt="Windows Download">
   </a>
-  <a href="https://github.com/hanimuhamed/nandScape/releases/download/v1.0.0-beta.1/nandScape-v1.0.0-beta.1-Linux.zip">
+  <a href="https://github.com/hanimuhamed/nandScape/releases/download/v1.0.0-beta.1/nandScape-v1.0.0-beta.1-Linux.7z">
     <img src="https://img.shields.io/badge/Download-Linux-FCC624?logo=linux&logoColor=black" alt="Linux Download">
   </a>
 </p>
